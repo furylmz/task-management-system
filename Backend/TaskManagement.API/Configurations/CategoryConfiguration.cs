@@ -6,24 +6,27 @@ namespace TaskManagement.API.Configurations;
 
 public class CategoryConfiguration : IEntityTypeConfiguration<Category>
 {
-    public void Configure(EntityTypeBuilder<Category> builder)
-    {
-        builder.HasKey(x => x.Id);
+       public void Configure(EntityTypeBuilder<Category> builder)
+       {
+              builder.HasIndex(x => new { x.UserId, x.Name })
+                     .IsUnique();
 
-        builder.Property(x => x.Name)
-               .IsRequired()
-               .HasMaxLength(100);
+              builder.HasKey(x => x.Id);
 
-        builder.Property(x => x.Color)
-               .HasMaxLength(7)
-               .HasDefaultValue("#007bff");
+              builder.Property(x => x.Name)
+                     .IsRequired()
+                     .HasMaxLength(100);
 
-        builder.Property(x => x.CreatedAt)
-               .HasDefaultValueSql("CURRENT_TIMESTAMP");
+              builder.Property(x => x.Color)
+                     .HasMaxLength(7)
+                     .HasDefaultValue("#007bff");
 
-        builder.HasOne(x => x.User)
-               .WithMany(x => x.Categories)
-               .HasForeignKey(x => x.UserId)
-               .OnDelete(DeleteBehavior.Cascade);
-    }
+              builder.Property(x => x.CreatedAt)
+                     .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+              builder.HasOne(x => x.User)
+                     .WithMany(x => x.Categories)
+                     .HasForeignKey(x => x.UserId)
+                     .OnDelete(DeleteBehavior.Cascade);
+       }
 }

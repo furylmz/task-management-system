@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using TaskManagement.API.Data;
 using TaskManagement.API.Mappings;
+using TaskManagement.API.Services.Implementations;
+using TaskManagement.API.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +17,11 @@ builder.Services.AddSwaggerGen();
 
 //Automapper service
 builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+//User, Category, Task Services
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ITaskService, TaskService>();
 
 var app = builder.Build();
 
