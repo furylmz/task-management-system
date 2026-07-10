@@ -59,6 +59,8 @@ public class TaskService : ITaskService
         task.UpdatedAt = DateTime.UtcNow;
         task.CompletedAt = null;
 
+        task.DueDate = NormalizeToUtc(createTaskDto.DueDate);
+
         _context.Tasks.Add(task);
 
         await _context.SaveChangesAsync();
@@ -109,6 +111,8 @@ public class TaskService : ITaskService
         }
 
         task.UpdatedAt = DateTime.UtcNow;
+
+        task.DueDate = NormalizeToUtc(updateTaskDto.DueDate);
 
         await _context.SaveChangesAsync();
 
@@ -168,5 +172,24 @@ public class TaskService : ITaskService
         var tasks = await query.ToListAsync();
 
         return _mapper.Map<List<TaskItemDto>>(tasks);
+    }
+
+
+    //Zaman dilimi unspecified olanları UTC zaman dilimine cevirme
+    private static DateTime? NormalizeToUtc(DateTime? dateTime)
+    {
+        if (!dateTime.HasValue)
+        {
+            return null;
+        }
+
+        return dateTime.Value.Kind switch
+        {
+            DateTimeKind.Utc => dateTime.Value,
+            DateTimeKind.Local => dateTime.Value.ToUniversalTime(),
+            DateTimeKind.Unspecified =>
+                DateTime.SpecifyKind(dateTime.Value, DateTimeKind.Utc),
+            _ => dateTime.Value
+        };
     }
 }
