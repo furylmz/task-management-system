@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using TaskManagement.API.Services.Interfaces;
+using TaskManagement.API.Exceptions;
 
 namespace TaskManagement.API.Services.Implementations;
 
@@ -18,13 +19,13 @@ public class JwtService : IJwtService
     public string GenerateToken(Guid userId, string username)
     {
         var secretKey = _configuration["Jwt:SecretKey"]
-            ?? throw new InvalidOperationException("JWT secret key is missing.");
+            ?? throw new ConfigurationException("JWT secret key is missing.");
 
         var issuer = _configuration["Jwt:Issuer"]
-            ?? throw new InvalidOperationException("JWT issuer is missing.");
+            ?? throw new ConfigurationException("JWT issuer is missing.");
 
         var audience = _configuration["Jwt:Audience"]
-            ?? throw new InvalidOperationException("JWT audience is missing.");
+            ?? throw new ConfigurationException("JWT audience is missing.");
 
         var expiryInMinutes = _configuration.GetValue<int>("Jwt:ExpiryInMinutes");
 

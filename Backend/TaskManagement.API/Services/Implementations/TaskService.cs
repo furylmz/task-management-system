@@ -5,6 +5,8 @@ using TaskManagement.API.DTOs.Tasks;
 using TaskManagement.API.Services.Interfaces;
 using TaskManagement.API.Enums;
 using TaskManagement.API.Models;
+using TaskManagement.API.Exceptions;
+using TaskManagement.API.DTOs.Common;
 
 namespace TaskManagement.API.Services.Implementations;
 
@@ -46,7 +48,7 @@ public class TaskService : ITaskService
 
             if (!categoryExists)
             {
-                throw new InvalidOperationException("Category not found.");
+                throw new NotFoundException("Category not found.");
             }
         }
 
@@ -86,7 +88,7 @@ public class TaskService : ITaskService
 
             if (!categoryExists)
             {
-                throw new InvalidOperationException("Category not found.");
+                throw new NotFoundException("Category not found.");
             }
         }
 
@@ -136,42 +138,69 @@ public class TaskService : ITaskService
         return true;
     }
 
-    public async Task<List<TaskItemDto>> FilterAsync(Guid userId, TaskFilterDto filterDto)
+    public async Task<PagedResult<TaskItemDto>> FilterAsync(
+    Guid userId,
+    TaskFilterDto filterDto)
     {
         IQueryable<TaskItem> query = _context.Tasks
             .Where(x => x.UserId == userId);
 
         if (!string.IsNullOrWhiteSpace(filterDto.SearchTerm))
         {
+            var searchTerm = filterDto.SearchTerm.Trim();
+
             query = query.Where(x =>
-                x.Title.Contains(filterDto.SearchTerm) ||
+                x.Title.Contains(searchTerm) ||
                 (x.Description != null &&
-                 x.Description.Contains(filterDto.SearchTerm)));
+                 x.Description.Contains(searchTerm)));
         }
 
         if (filterDto.Priority.HasValue)
         {
-            query = query.Where(x => x.Priority == filterDto.Priority);
+            query = query.Where(x =>
+                x.Priority == filterDto.Priority.Value);
         }
 
         if (filterDto.Status.HasValue)
         {
-            query = query.Where(x => x.Status == filterDto.Status);
+            query = query.Where(x =>
+                x.Status == filterDto.Status.Value);
         }
 
         if (filterDto.CategoryId.HasValue)
         {
-            query = query.Where(x => x.CategoryId == filterDto.CategoryId);
+            query = query.Where(x =>
+                x.CategoryId == filterDto.CategoryId.Value);
         }
 
         if (filterDto.DueDate.HasValue)
         {
-            query = query.Where(x => x.DueDate == filterDto.DueDate);
+            var date = filterDto.DueDate.Value.Date;
+            var nextDate = date.AddDays(1);
+
+            query = query.Where(x =>
+                x.DueDate >= date &&
+                x.DueDate < nextDate);
         }
 
-        var tasks = await query.ToListAsync();
+        var totalCount = await query.CountAsync();
 
-        return _mapper.Map<List<TaskItemDto>>(tasks);
+        var tasks = await query
+            .OrderByDescending(x => x.CreatedAt)
+            .ThenBy(x => x.Id)
+            .Skip((filterDto.PageNumber - 1) * filterDto.PageSize)
+            .Take(filterDto.PageSize)
+            .ToListAsync();
+
+        return new PagedResult<TaskItemDto>
+        {
+            Items = _mapper.Map<List<TaskItemDto>>(tasks),
+            PageNumber = filterDto.PageNumber,
+            PageSize = filterDto.PageSize,
+            TotalCount = totalCount,
+            TotalPages = (int)Math.Ceiling(
+                totalCount / (double)filterDto.PageSize)
+        };
     }
 
 

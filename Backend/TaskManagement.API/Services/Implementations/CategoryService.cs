@@ -4,6 +4,7 @@ using TaskManagement.API.Data;
 using TaskManagement.API.DTOs.Categories;
 using TaskManagement.API.Models;
 using TaskManagement.API.Services.Interfaces;
+using TaskManagement.API.Exceptions;
 
 namespace TaskManagement.API.Services.Implementations;
 
@@ -42,7 +43,7 @@ public class CategoryService : ICategoryService
 
         if (nameExists)
         {
-            throw new InvalidOperationException("Category name is already used.");
+            throw new ConflictException("Category name is already used.");
         }
 
         var category = _mapper.Map<Category>(createCategoryDto);
@@ -73,7 +74,7 @@ public class CategoryService : ICategoryService
 
         if (nameExists)
         {
-            throw new InvalidOperationException("Category name is already used.");
+            throw new ConflictException("Category name is already used.");
         }
 
         category.Name = updateCategoryDto.Name;

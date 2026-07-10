@@ -1,7 +1,9 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TaskManagement.API.DTOs.Common;
 using TaskManagement.API.DTOs.Tasks;
+using TaskManagement.API.Exceptions;
 using TaskManagement.API.Services.Interfaces;
 
 namespace TaskManagement.API.Controllers;
@@ -49,18 +51,11 @@ public class TasksController : ControllerBase
     {
         var userId = GetUserId();
 
-        try
-        {
-            var task = await _taskService.CreateAsync(
-                userId,
-                createTaskDto);
+        var task = await _taskService.CreateAsync(
+            userId,
+            createTaskDto);
 
-            return Ok(task);
-        }
-        catch (InvalidOperationException exception)
-        {
-            return BadRequest(new { message = exception.Message });
-        }
+        return Ok(task);
     }
 
     [HttpPut("{id:guid}")]
@@ -70,24 +65,17 @@ public class TasksController : ControllerBase
     {
         var userId = GetUserId();
 
-        try
-        {
-            var task = await _taskService.UpdateAsync(
-                id,
-                userId,
-                updateTaskDto);
+        var task = await _taskService.UpdateAsync(
+            id,
+            userId,
+            updateTaskDto);
 
-            if (task == null)
-            {
-                return NotFound(new { message = "Task not found." });
-            }
-
-            return Ok(task);
-        }
-        catch (InvalidOperationException exception)
+        if (task == null)
         {
-            return BadRequest(new { message = exception.Message });
+            return NotFound(new { message = "Task not found." });
         }
+
+        return Ok(task);
     }
 
     [HttpDelete("{id:guid}")]
@@ -106,14 +94,16 @@ public class TasksController : ControllerBase
     }
 
     [HttpGet("filter")]
-    public async Task<ActionResult<List<TaskItemDto>>> Filter(
-        [FromQuery] TaskFilterDto filterDto)
+    public async Task<ActionResult<PagedResult<TaskItemDto>>> Filter(
+    [FromQuery] TaskFilterDto filterDto)
     {
         var userId = GetUserId();
 
-        var tasks = await _taskService.FilterAsync(userId, filterDto);
+        var result = await _taskService.FilterAsync(
+            userId,
+            filterDto);
 
-        return Ok(tasks);
+        return Ok(result);
     }
 
     private Guid GetUserId()
@@ -122,8 +112,7 @@ public class TasksController : ControllerBase
 
         if (!Guid.TryParse(userIdValue, out var userId))
         {
-            throw new UnauthorizedAccessException(
-                "User identifier is missing or invalid.");
+            throw new UnauthorizedException("User identifier is missing or invalid.");
         }
 
         return userId;

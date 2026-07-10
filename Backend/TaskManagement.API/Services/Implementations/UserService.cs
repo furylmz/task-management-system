@@ -4,6 +4,7 @@ using TaskManagement.API.Data;
 using TaskManagement.API.DTOs.Users;
 using TaskManagement.API.Models;
 using TaskManagement.API.Services.Interfaces;
+using TaskManagement.API.Exceptions;
 
 namespace TaskManagement.API.Services.Implementations;
 
@@ -40,7 +41,7 @@ public class UserService : IUserService
 
         if (usernameExists)
         {
-            throw new InvalidOperationException("Username is already taken.");
+            throw new ConflictException("Username is already taken.");
         }
 
         var emailExists = await _context.Users
@@ -48,7 +49,7 @@ public class UserService : IUserService
 
         if (emailExists)
         {
-            throw new InvalidOperationException("Email is already taken.");
+            throw new ConflictException("Email is already taken.");
         }
 
         var user = _mapper.Map<User>(createUserDto);
@@ -79,7 +80,7 @@ public class UserService : IUserService
 
         if (usernameExists)
         {
-            throw new InvalidOperationException("Username is already taken.");
+            throw new ConflictException("Username is already taken.");
         }
 
         user.Username = updateUserDto.Username;

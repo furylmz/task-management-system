@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskManagement.API.DTOs.Categories;
+using TaskManagement.API.Exceptions;
 using TaskManagement.API.Services.Interfaces;
 
 namespace TaskManagement.API.Controllers;
@@ -49,18 +50,11 @@ public class CategoriesController : ControllerBase
     {
         var userId = GetUserId();
 
-        try
-        {
-            var category = await _categoryService.CreateAsync(
-                userId,
-                createCategoryDto);
+        var category = await _categoryService.CreateAsync(
+            userId,
+            createCategoryDto);
 
-            return Ok(category);
-        }
-        catch (InvalidOperationException exception)
-        {
-            return Conflict(new { message = exception.Message });
-        }
+        return Ok(category);
     }
 
     [HttpPut("{id:guid}")]
@@ -70,24 +64,17 @@ public class CategoriesController : ControllerBase
     {
         var userId = GetUserId();
 
-        try
-        {
-            var category = await _categoryService.UpdateAsync(
-                id,
-                userId,
-                updateCategoryDto);
+        var category = await _categoryService.UpdateAsync(
+            id,
+            userId,
+            updateCategoryDto);
 
-            if (category == null)
-            {
-                return NotFound(new { message = "Category not found." });
-            }
-
-            return Ok(category);
-        }
-        catch (InvalidOperationException exception)
+        if (category == null)
         {
-            return Conflict(new { message = exception.Message });
+            return NotFound(new { message = "Category not found." });
         }
+
+        return Ok(category);
     }
 
     [HttpDelete("{id:guid}")]
@@ -111,8 +98,7 @@ public class CategoriesController : ControllerBase
 
         if (!Guid.TryParse(userIdValue, out var userId))
         {
-            throw new UnauthorizedAccessException(
-                "User identifier is missing or invalid.");
+            throw new UnauthorizedException("User identifier is missing or invalid.");
         }
 
         return userId;

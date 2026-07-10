@@ -1,3 +1,4 @@
+using TaskManagement.API.DTOs.Common;
 using TaskManagement.API.DTOs.Tasks;
 
 namespace TaskManagement.API.Services.Interfaces;
@@ -14,5 +15,5 @@ public interface ITaskService
 
     Task<bool> DeleteAsync(Guid id, Guid userId);
 
-    Task<List<TaskItemDto>> FilterAsync(Guid userId, TaskFilterDto filterDto);
+    Task<PagedResult<TaskItemDto>> FilterAsync(Guid userId, TaskFilterDto filterDto);
 }

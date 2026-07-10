@@ -23,16 +23,9 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<ActionResult<UserDto>> Register(CreateUserDto createUserDto)
     {
-        try
-        {
-            var user = await _userService.CreateAsync(createUserDto);
+        var user = await _userService.CreateAsync(createUserDto);
 
-            return Ok(user);
-        }
-        catch (InvalidOperationException exception)
-        {
-            return Conflict(new { message = exception.Message });
-        }
+        return Ok(user);
     }
 
     [AllowAnonymous]
