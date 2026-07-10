@@ -107,4 +107,26 @@ public class UserService : IUserService
 
         return true;
     }
+
+    public async Task<UserDto?> AuthenticateAsync(LoginDto loginDto)
+    {
+        var user = await _context.Users
+            .FirstOrDefaultAsync(x => x.Username == loginDto.Username);
+
+        if (user == null || !user.IsActive)
+        {
+            return null;
+        }
+
+        var passwordIsValid = BCrypt.Net.BCrypt.Verify(
+            loginDto.Password,
+            user.PasswordHash);
+
+        if (!passwordIsValid)
+        {
+            return null;
+        }
+
+        return _mapper.Map<UserDto>(user);
+    }
 }
