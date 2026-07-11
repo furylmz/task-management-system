@@ -21,14 +21,19 @@ public class UserService : IUserService
 
     public async Task<UserDto?> GetByIdAsync(Guid id)
     {
-        var user = await _context.Users.FindAsync(id);
+        var user = await _context.Users
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == id);
 
-        return user == null ? null : _mapper.Map<UserDto>(user);
+        return user == null
+            ? null
+            : _mapper.Map<UserDto>(user);
     }
 
     public async Task<UserDto?> GetByUsernameAsync(string username)
     {
         var user = await _context.Users
+            .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Username == username);
 
         return user == null ? null : _mapper.Map<UserDto>(user);
@@ -112,6 +117,7 @@ public class UserService : IUserService
     public async Task<UserDto?> AuthenticateAsync(LoginDto loginDto)
     {
         var user = await _context.Users
+            .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Username == loginDto.Username);
 
         if (user == null || !user.IsActive)

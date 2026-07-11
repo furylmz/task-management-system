@@ -28,24 +28,29 @@ public class TaskAttachmentService : ITaskAttachmentService
     private readonly ApplicationDbContext _context;
     private readonly IMapper _mapper;
     private readonly IWebHostEnvironment _environment;
+    private readonly ILogger<TaskAttachmentService> _logger;
 
     public TaskAttachmentService(
         ApplicationDbContext context,
         IMapper mapper,
-        IWebHostEnvironment environment)
+        IWebHostEnvironment environment,
+        ILogger<TaskAttachmentService> logger)
     {
         _context = context;
         _mapper = mapper;
         _environment = environment;
+        _logger = logger;
     }
 
     public async Task<List<TaskAttachmentDto>> GetAllByTaskIdAsync(
         Guid taskId,
         Guid userId)
     {
-        var taskExists = await _context.Tasks.AnyAsync(x =>
-            x.Id == taskId &&
-            x.UserId == userId);
+        var taskExists = await _context.Tasks
+            .AsNoTracking()
+            .AnyAsync(x =>
+                x.Id == taskId &&
+                x.UserId == userId);
 
         if (!taskExists)
         {
@@ -53,6 +58,7 @@ public class TaskAttachmentService : ITaskAttachmentService
         }
 
         var attachments = await _context.Attachments
+            .AsNoTracking()
             .Where(x => x.TaskId == taskId)
             .OrderByDescending(x => x.UploadedAt)
             .ToListAsync();
@@ -184,8 +190,8 @@ public class TaskAttachmentService : ITaskAttachmentService
     }
 
     public async Task<bool> DeleteAsync(
-        Guid attachmentId,
-        Guid userId)
+    Guid attachmentId,
+    Guid userId)
     {
         var attachment = await _context.Attachments
             .Include(x => x.TaskItem)
@@ -198,12 +204,24 @@ public class TaskAttachmentService : ITaskAttachmentService
             return false;
         }
 
+        var filePath = attachment.FilePath;
+
         _context.Attachments.Remove(attachment);
         await _context.SaveChangesAsync();
 
-        if (File.Exists(attachment.FilePath))
+        try
         {
-            File.Delete(attachment.FilePath);
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(
+                exception,
+                "Attachment file could not be deleted. Path: {FilePath}",
+                filePath);
         }
 
         return true;

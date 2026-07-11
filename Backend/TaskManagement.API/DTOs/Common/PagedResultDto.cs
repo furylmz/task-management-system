@@ -1,6 +1,6 @@
 namespace TaskManagement.API.DTOs.Common;
 
-public class PagedResult<T>
+public class PagedResultDto<T>
 {
     public List<T> Items { get; set; } = [];
 

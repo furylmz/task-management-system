@@ -21,13 +21,16 @@ public class TasksController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<TaskItemDto>>> GetAll()
+    public async Task<ActionResult<PagedResultDto<TaskItemDto>>> GetAll(
+    [FromQuery] TaskFilterDto filterDto)
     {
         var userId = GetUserId();
 
-        var tasks = await _taskService.GetAllByUserIdAsync(userId);
+        var result = await _taskService.FilterAsync(
+            userId,
+            filterDto);
 
-        return Ok(tasks);
+        return Ok(result);
     }
 
     [HttpGet("{id:guid}")]
@@ -111,19 +114,6 @@ public class TasksController : ControllerBase
         }
 
         return NoContent();
-    }
-
-    [HttpGet("filter")]
-    public async Task<ActionResult<PagedResult<TaskItemDto>>> Filter(
-    [FromQuery] TaskFilterDto filterDto)
-    {
-        var userId = GetUserId();
-
-        var result = await _taskService.FilterAsync(
-            userId,
-            filterDto);
-
-        return Ok(result);
     }
 
     private Guid GetUserId()

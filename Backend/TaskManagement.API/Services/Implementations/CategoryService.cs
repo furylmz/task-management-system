@@ -22,6 +22,7 @@ public class CategoryService : ICategoryService
     public async Task<List<CategoryDto>> GetAllByUserIdAsync(Guid userId)
     {
         var categories = await _context.Categories
+            .AsNoTracking()
             .Where(x => x.UserId == userId)
             .ToListAsync();
 
@@ -31,6 +32,7 @@ public class CategoryService : ICategoryService
     public async Task<CategoryDto?> GetByIdAsync(Guid id, Guid userId)
     {
         var category = await _context.Categories
+            .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id && x.UserId == userId);
 
         return category == null ? null : _mapper.Map<CategoryDto>(category);

@@ -25,9 +25,11 @@ public class TaskCommentService : ITaskCommentService
         Guid taskId,
         Guid userId)
     {
-        var taskExists = await _context.Tasks.AnyAsync(x =>
-            x.Id == taskId &&
-            x.UserId == userId);
+        var taskExists = await _context.Tasks
+            .AsNoTracking()
+            .AnyAsync(x =>
+                x.Id == taskId &&
+                x.UserId == userId);
 
         if (!taskExists)
         {
@@ -35,6 +37,7 @@ public class TaskCommentService : ITaskCommentService
         }
 
         var comments = await _context.Comments
+            .AsNoTracking()
             .Where(x => x.TaskId == taskId)
             .OrderBy(x => x.CreatedAt)
             .ToListAsync();

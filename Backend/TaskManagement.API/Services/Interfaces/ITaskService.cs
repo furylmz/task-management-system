@@ -5,8 +5,6 @@ namespace TaskManagement.API.Services.Interfaces;
 
 public interface ITaskService
 {
-    Task<List<TaskItemDto>> GetAllByUserIdAsync(Guid userId);
-
     Task<TaskItemDto?> GetByIdAsync(Guid id, Guid userId);
 
     Task<TaskItemDto> CreateAsync(Guid userId, CreateTaskDto createTaskDto);
@@ -15,7 +13,7 @@ public interface ITaskService
 
     Task<bool> DeleteAsync(Guid id, Guid userId);
 
-    Task<PagedResult<TaskItemDto>> FilterAsync(Guid userId, TaskFilterDto filterDto);
+    Task<PagedResultDto<TaskItemDto>> FilterAsync(Guid userId, TaskFilterDto filterDto);
 
     Task<List<TaskItemDto>> GetOverdueAsync(Guid userId);
 

@@ -21,18 +21,10 @@ public class TaskService : ITaskService
         _mapper = mapper;
     }
 
-    public async Task<List<TaskItemDto>> GetAllByUserIdAsync(Guid userId)
-    {
-        var tasks = await _context.Tasks
-            .Where(x => x.UserId == userId)
-            .ToListAsync();
-
-        return _mapper.Map<List<TaskItemDto>>(tasks);
-    }
-
     public async Task<TaskItemDto?> GetByIdAsync(Guid id, Guid userId)
     {
         var task = await _context.Tasks
+            .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id && x.UserId == userId);
 
         return task == null ? null : _mapper.Map<TaskItemDto>(task);
@@ -95,7 +87,6 @@ public class TaskService : ITaskService
         task.Title = updateTaskDto.Title;
         task.Description = updateTaskDto.Description;
         task.Priority = updateTaskDto.Priority;
-        task.DueDate = updateTaskDto.DueDate;
         task.CategoryId = updateTaskDto.CategoryId;
 
         if (task.Status != updateTaskDto.Status)
@@ -138,11 +129,12 @@ public class TaskService : ITaskService
         return true;
     }
 
-    public async Task<PagedResult<TaskItemDto>> FilterAsync(
+    public async Task<PagedResultDto<TaskItemDto>> FilterAsync(
     Guid userId,
     TaskFilterDto filterDto)
     {
         IQueryable<TaskItem> query = _context.Tasks
+            .AsNoTracking()
             .Where(x => x.UserId == userId);
 
         if (!string.IsNullOrWhiteSpace(filterDto.SearchTerm))
@@ -192,7 +184,7 @@ public class TaskService : ITaskService
             .Take(filterDto.PageSize)
             .ToListAsync();
 
-        return new PagedResult<TaskItemDto>
+        return new PagedResultDto<TaskItemDto>
         {
             Items = _mapper.Map<List<TaskItemDto>>(tasks),
             PageNumber = filterDto.PageNumber,
@@ -227,6 +219,7 @@ public class TaskService : ITaskService
         var now = DateTime.UtcNow;
 
         var tasks = await _context.Tasks
+            .AsNoTracking()
             .Where(x =>
                 x.UserId == userId &&
                 x.DueDate.HasValue &&
@@ -244,6 +237,7 @@ public class TaskService : ITaskService
         var now = DateTime.UtcNow;
 
         var userTasks = _context.Tasks
+            .AsNoTracking()
             .Where(x => x.UserId == userId);
 
         var totalTasks = await userTasks.CountAsync();
