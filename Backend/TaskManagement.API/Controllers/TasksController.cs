@@ -45,6 +45,26 @@ public class TasksController : ControllerBase
         return Ok(task);
     }
 
+    [HttpGet("overdue")]
+    public async Task<ActionResult<List<TaskItemDto>>> GetOverdue()
+    {
+        var userId = GetUserId();
+
+        var tasks = await _taskService.GetOverdueAsync(userId);
+
+        return Ok(tasks);
+    }
+
+    [HttpGet("statistics")]
+    public async Task<ActionResult<TaskStatisticsDto>> GetStatistics()
+    {
+        var userId = GetUserId();
+
+        var statistics = await _taskService.GetStatisticsAsync(userId);
+
+        return Ok(statistics);
+    }
+
     [HttpPost]
     public async Task<ActionResult<TaskItemDto>> Create(
         CreateTaskDto createTaskDto)

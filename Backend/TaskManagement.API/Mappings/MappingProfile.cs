@@ -1,5 +1,6 @@
 using AutoMapper;
 using TaskManagement.API.DTOs.Categories;
+using TaskManagement.API.DTOs.Comments;
 using TaskManagement.API.DTOs.Tasks;
 using TaskManagement.API.DTOs.Users;
 using TaskManagement.API.Models;
@@ -21,5 +22,9 @@ public class MappingProfile : Profile
         CreateMap<TaskItem, TaskItemDto>();
         CreateMap<CreateTaskDto, TaskItem>();
         CreateMap<UpdateTaskDto, TaskItem>();
+
+        CreateMap<TaskComment, TaskCommentDto>();
+        CreateMap<CreateTaskCommentDto, TaskComment>();
+        CreateMap<UpdateTaskCommentDto, TaskComment>();
     }
 }

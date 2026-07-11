@@ -16,4 +16,8 @@ public interface ITaskService
     Task<bool> DeleteAsync(Guid id, Guid userId);
 
     Task<PagedResult<TaskItemDto>> FilterAsync(Guid userId, TaskFilterDto filterDto);
+
+    Task<List<TaskItemDto>> GetOverdueAsync(Guid userId);
+
+    Task<TaskStatisticsDto> GetStatisticsAsync(Guid userId);
 }

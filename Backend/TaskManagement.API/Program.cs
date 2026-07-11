@@ -41,10 +41,11 @@ builder.Services.AddSwaggerGen(options =>
 //Automapper service
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
-//User, Category, Task Services
+//User, Category, Task. TaskComment Services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ITaskService, TaskService>();
+builder.Services.AddScoped<ITaskCommentService, TaskCommentService>();
 
 //Jwt Service
 builder.Services.AddScoped<IJwtService, JwtService>();

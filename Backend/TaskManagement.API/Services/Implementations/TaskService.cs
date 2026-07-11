@@ -221,4 +221,66 @@ public class TaskService : ITaskService
             _ => dateTime.Value
         };
     }
+
+    public async Task<List<TaskItemDto>> GetOverdueAsync(Guid userId)
+    {
+        var now = DateTime.UtcNow;
+
+        var tasks = await _context.Tasks
+            .Where(x =>
+                x.UserId == userId &&
+                x.DueDate.HasValue &&
+                x.DueDate.Value < now &&
+                x.Status != TaskItemStatus.Completed &&
+                x.Status != TaskItemStatus.Cancelled)
+            .OrderBy(x => x.DueDate)
+            .ToListAsync();
+
+        return _mapper.Map<List<TaskItemDto>>(tasks);
+    }
+
+    public async Task<TaskStatisticsDto> GetStatisticsAsync(Guid userId)
+    {
+        var now = DateTime.UtcNow;
+
+        var userTasks = _context.Tasks
+            .Where(x => x.UserId == userId);
+
+        var totalTasks = await userTasks.CountAsync();
+
+        var pendingTasks = await userTasks.CountAsync(
+            x => x.Status == TaskItemStatus.Pending);
+
+        var inProgressTasks = await userTasks.CountAsync(
+            x => x.Status == TaskItemStatus.InProgress);
+
+        var completedTasks = await userTasks.CountAsync(
+            x => x.Status == TaskItemStatus.Completed);
+
+        var cancelledTasks = await userTasks.CountAsync(
+            x => x.Status == TaskItemStatus.Cancelled);
+
+        var overdueTasks = await userTasks.CountAsync(x =>
+            x.DueDate.HasValue &&
+            x.DueDate.Value < now &&
+            x.Status != TaskItemStatus.Completed &&
+            x.Status != TaskItemStatus.Cancelled);
+
+        var completionRate = totalTasks == 0
+            ? 0
+            : Math.Round(
+                completedTasks * 100.0 / totalTasks,
+                2);
+
+        return new TaskStatisticsDto
+        {
+            TotalTasks = totalTasks,
+            PendingTasks = pendingTasks,
+            InProgressTasks = inProgressTasks,
+            CompletedTasks = completedTasks,
+            CancelledTasks = cancelledTasks,
+            OverdueTasks = overdueTasks,
+            CompletionRate = completionRate
+        };
+    }
 }
