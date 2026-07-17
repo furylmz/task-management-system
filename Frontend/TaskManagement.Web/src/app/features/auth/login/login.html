@@ -1,1 +1,92 @@
-<p>login works!</p>
+<div class="login-page">
+  <form
+    class="login-form"
+    [formGroup]="loginForm"
+    (ngSubmit)="onSubmit()"
+  >
+    <h1>Giriş Yap</h1>
+
+    @if (registrationSuccess) {
+      <div class="success-message">
+        Kaydınız başarıyla oluşturuldu. Şimdi giriş yapabilirsiniz.
+      </div>
+    }
+
+    <div class="form-field">
+      <label for="username">
+        Kullanıcı adı
+      </label>
+
+      <input
+        id="username"
+        type="text"
+        formControlName="username"
+        autocomplete="username"
+      >
+
+      @if (
+        loginForm.controls.username.touched &&
+        loginForm.controls.username.hasError('required')
+      ) {
+        <small class="field-error">
+          Kullanıcı adı zorunludur.
+        </small>
+      }
+    </div>
+
+    <div class="form-field">
+      <label for="password">
+        Şifre
+      </label>
+
+      <input
+        id="password"
+        type="password"
+        formControlName="password"
+        autocomplete="current-password"
+      >
+
+      @if (
+        loginForm.controls.password.touched &&
+        loginForm.controls.password.hasError('required')
+      ) {
+        <small class="field-error">
+          Şifre zorunludur.
+        </small>
+      }
+
+      @if (
+        loginForm.controls.password.touched &&
+        loginForm.controls.password.hasError('minlength')
+      ) {
+        <small class="field-error">
+          Şifre en az 6 karakter olmalıdır.
+        </small>
+      }
+    </div>
+
+    @if (errorMessage()) {
+      <div class="api-error">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <button
+      type="submit"
+      [disabled]="isLoading()"
+    >
+      @if (isLoading()) {
+        Giriş yapılıyor...
+      } @else {
+        Giriş Yap
+      }
+    </button>
+
+    <p class="register-link">
+      Hesabın yok mu?
+      <a routerLink="/register">
+        Kayıt ol
+      </a>
+    </p>
+  </form>
+</div>

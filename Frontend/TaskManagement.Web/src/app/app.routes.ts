@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './core/guards/auth-guard';
 
 export const routes: Routes = [
   {
@@ -20,12 +21,14 @@ export const routes: Routes = [
   },
   {
     path: 'tasks',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./features/tasks/task-list/task-list')
         .then(component => component.TaskList)
   },
   {
   path: 'categories',
+  canActivate: [authGuard],
   loadComponent: () =>
     import('./features/categories/category-list/category-list')
       .then(component => component.CategoryList)

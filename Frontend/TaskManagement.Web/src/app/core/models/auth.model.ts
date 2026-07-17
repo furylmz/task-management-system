@@ -17,3 +17,10 @@ export interface LoginResponse {
   token: string;
   user: User;
 }
+
+export interface JwtPayload {
+  exp: number;
+  sub?: string;
+  email?: string;
+  name?: string;
+}

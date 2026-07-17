@@ -1,0 +1,80 @@
+.register-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 100%;
+  max-width: 520px;
+  padding: 32px;
+  border: 1px solid #dddddd;
+  border-radius: 12px;
+}
+
+.register-form h1 {
+  margin: 0 0 8px;
+  text-align: center;
+}
+
+.name-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-field input {
+  padding: 12px;
+  font: inherit;
+  border: 1px solid #bbbbbb;
+  border-radius: 6px;
+}
+
+.form-field input:focus {
+  outline: 2px solid currentColor;
+  outline-offset: 1px;
+}
+
+.field-error,
+.api-error {
+  font-size: 14px;
+}
+
+.api-error {
+  padding: 12px;
+  border: 1px solid currentColor;
+  border-radius: 6px;
+}
+
+button {
+  padding: 12px;
+  font: inherit;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.login-link {
+  margin: 0;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .name-fields {
+    grid-template-columns: 1fr;
+  }
+}
