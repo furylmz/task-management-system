@@ -1,0 +1,28 @@
+.dialog-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  min-width: 320px;
+  padding-top: 8px;
+}
+
+.dialog-content mat-icon {
+  flex-shrink: 0;
+  color: var(--mat-sys-error);
+}
+
+.dialog-content p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.delete-button {
+  color: var(--mat-sys-on-error);
+  background-color: var(--mat-sys-error);
+}
+
+@media (max-width: 500px) {
+  .dialog-content {
+    min-width: 0;
+  }
+}

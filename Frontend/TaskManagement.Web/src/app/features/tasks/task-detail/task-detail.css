@@ -1,0 +1,161 @@
+:host {
+  display: block;
+}
+
+.task-detail-page {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.header-text h1 {
+  margin: 0 0 6px;
+  font-size: 2rem;
+}
+
+.header-text p {
+  margin: 0;
+  opacity: 0.7;
+}
+
+.task-detail-card {
+  padding: 12px;
+  border-radius: 16px;
+}
+
+.badges {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 20px 0 28px;
+}
+
+.priority-badge {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.priority-lowest {
+  background-color: #e8f5e9;
+  color: #1b5e20;
+}
+
+.priority-low {
+  background-color: #e3f2fd;
+  color: #0d47a1;
+}
+
+.priority-medium {
+  background-color: #fff8e1;
+  color: #8a5a00;
+}
+
+.priority-high {
+  background-color: #fff3e0;
+  color: #b54708;
+}
+
+.priority-highest {
+  background-color: #ffebee;
+  color: #b71c1c;
+}
+
+.detail-section {
+  margin-bottom: 28px;
+}
+
+.detail-section h2 {
+  margin: 0 0 10px;
+  font-size: 1.1rem;
+}
+
+.description {
+  margin: 0;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.empty-value {
+  margin: 0;
+  opacity: 0.6;
+  font-style: italic;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.detail-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  background-color:
+    var(--mat-sys-surface-container);
+}
+
+.detail-item > mat-icon {
+  flex-shrink: 0;
+}
+
+.detail-item > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detail-label {
+  font-size: 0.8rem;
+  opacity: 0.65;
+}
+
+.detail-value {
+  overflow-wrap: anywhere;
+  font-weight: 500;
+}
+
+.state-container {
+  display: flex;
+  min-height: 360px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 32px;
+  text-align: center;
+}
+
+.state-container > mat-icon {
+  width: 64px;
+  height: 64px;
+  font-size: 64px;
+}
+
+.state-container h2,
+.state-container p {
+  margin: 0;
+}
+
+.error-state > mat-icon {
+  color: var(--mat-sys-error);
+}
+
+@media (max-width: 700px) {
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+}

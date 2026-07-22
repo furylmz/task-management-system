@@ -1,0 +1,90 @@
+<mat-card class="task-card">
+  <mat-card-header>
+    <div class="task-card__header">
+      <div>
+        <mat-card-title>
+          {{ task().title }}
+        </mat-card-title>
+
+        <mat-card-subtitle>
+          {{ getStatusLabel(task().status) }}
+        </mat-card-subtitle>
+      </div>
+
+      <span
+        class="priority-badge"
+        [class.priority-lowest]="task().priority === Priority.Lowest"
+        [class.priority-low]="task().priority === Priority.Low"
+        [class.priority-medium]="task().priority === Priority.Medium"
+        [class.priority-high]="task().priority === Priority.High"
+        [class.priority-highest]="task().priority === Priority.Highest"
+      >
+        {{ getPriorityLabel(task().priority) }}
+      </span>
+    </div>
+  </mat-card-header>
+
+  <mat-card-content>
+    @if (task().description) {
+      <p class="task-description">
+        {{ task().description }}
+      </p>
+    } @else {
+      <p class="task-description task-description--empty">
+        Açıklama eklenmemiş.
+      </p>
+    }
+
+    <div class="task-meta">
+      @if (task().dueDate) {
+        <div class="task-meta__item">
+          <mat-icon>event</mat-icon>
+
+          <span>
+            Son tarih:
+            {{ task().dueDate | date: 'dd.MM.yyyy HH:mm' }}
+          </span>
+        </div>
+      }
+
+      <div class="task-meta__item">
+        <mat-icon>schedule</mat-icon>
+
+        <span>
+          Oluşturulma:
+          {{ task().createdAt | date: 'dd.MM.yyyy' }}
+        </span>
+      </div>
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions align="end">
+    <button
+      mat-button
+      type="button"
+      (click)="showDetails()"
+    >
+      <mat-icon>visibility</mat-icon>
+      Detay
+    </button>
+
+    <button
+      mat-button
+      type="button"
+      (click)="editTask()"
+    >
+      <mat-icon>edit</mat-icon>
+      Düzenle
+    </button>
+
+    <button
+      mat-button
+      type="button"
+      class="delete-button"
+      (click)="deleteTask()"
+    >
+      <mat-icon>delete</mat-icon>
+      Sil
+    </button>
+  </mat-card-actions>
+</mat-card>

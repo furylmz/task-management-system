@@ -1,0 +1,173 @@
+<section class="task-detail-page">
+  <header class="page-header">
+    <button
+      mat-icon-button
+      type="button"
+      aria-label="Görev listesine dön"
+      (click)="goBack()"
+    >
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+
+    <div class="header-text">
+      <h1>Görev Detayı</h1>
+      <p>Göreve ait bütün bilgileri görüntüleyin.</p>
+    </div>
+  </header>
+
+  @if (isLoading()) {
+    <div class="state-container">
+      <mat-spinner diameter="48" />
+      <p>Görev bilgileri yükleniyor...</p>
+    </div>
+  } @else if (errorMessage()) {
+    <div class="state-container error-state">
+      <mat-icon>error_outline</mat-icon>
+
+      <h2>Görev yüklenemedi</h2>
+
+      <p>{{ errorMessage() }}</p>
+
+      <button
+        mat-stroked-button
+        type="button"
+        (click)="goBack()"
+      >
+        <mat-icon>arrow_back</mat-icon>
+        Görev Listesine Dön
+      </button>
+    </div>
+  } @else if (task(); as currentTask) {
+    <mat-card class="task-detail-card">
+      <mat-card-header>
+        <mat-card-title>
+          {{ currentTask.title }}
+        </mat-card-title>
+
+        <mat-card-subtitle>
+          {{ getStatusLabel(currentTask.status) }}
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="badges">
+          <span
+            class="priority-badge"
+            [class.priority-lowest]="
+              currentTask.priority === Priority.Lowest
+            "
+            [class.priority-low]="
+              currentTask.priority === Priority.Low
+            "
+            [class.priority-medium]="
+              currentTask.priority === Priority.Medium
+            "
+            [class.priority-high]="
+              currentTask.priority === Priority.High
+            "
+            [class.priority-highest]="
+              currentTask.priority === Priority.Highest
+            "
+          >
+            {{ getPriorityLabel(currentTask.priority) }}
+          </span>
+
+          <mat-chip>
+            {{ getStatusLabel(currentTask.status) }}
+          </mat-chip>
+        </div>
+
+        <section class="detail-section">
+          <h2>Açıklama</h2>
+
+          @if (currentTask.description) {
+            <p class="description">
+              {{ currentTask.description }}
+            </p>
+          } @else {
+            <p class="empty-value">
+              Bu görev için açıklama girilmemiş.
+            </p>
+          }
+        </section>
+
+        <section class="detail-grid">
+          <div class="detail-item">
+            <mat-icon>event</mat-icon>
+
+            <div>
+              <span class="detail-label">Son tarih</span>
+
+              <span class="detail-value">
+                @if (currentTask.dueDate) {
+                  {{ currentTask.dueDate | date:'dd.MM.yyyy HH:mm' }}
+                } @else {
+                  Belirtilmemiş
+                }
+              </span>
+            </div>
+          </div>
+
+          <div class="detail-item">
+            <mat-icon>calendar_today</mat-icon>
+
+            <div>
+              <span class="detail-label">Oluşturulma</span>
+
+              <span class="detail-value">
+                {{ currentTask.createdAt | date:'dd.MM.yyyy HH:mm' }}
+              </span>
+            </div>
+          </div>
+
+          <div class="detail-item">
+            <mat-icon>update</mat-icon>
+
+            <div>
+              <span class="detail-label">Son güncelleme</span>
+
+              <span class="detail-value">
+                {{ currentTask.updatedAt | date:'dd.MM.yyyy HH:mm' }}
+              </span>
+            </div>
+          </div>
+
+          <div class="detail-item">
+            <mat-icon>category</mat-icon>
+
+            <div>
+              <span class="detail-label">Kategori</span>
+
+              <span class="detail-value">
+                @if (currentTask.categoryId) {
+                  {{ currentTask.categoryId }}
+                } @else {
+                  Kategori yok
+                }
+              </span>
+            </div>
+          </div>
+        </section>
+      </mat-card-content>
+
+      <mat-card-actions align="end">
+        <button
+          mat-stroked-button
+          type="button"
+          (click)="goBack()"
+        >
+          İptal
+        </button>
+
+        <button
+          mat-flat-button
+          type="button"
+          (click)="editTask()"
+        >
+          <mat-icon>edit</mat-icon>
+          Düzenle
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  }
+</section>

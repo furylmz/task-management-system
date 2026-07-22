@@ -1,0 +1,219 @@
+<section class="task-form-page">
+  <header class="page-header">
+    <button
+      mat-icon-button
+      type="button"
+      aria-label="Görev listesine dön"
+      (click)="cancel()"
+    >
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+
+    <div>
+      <h1>
+        @if (isEditMode()) {
+          Görevi Düzenle
+        } @else {
+          Yeni Görev
+        }
+      </h1>
+
+      <p>
+        @if (isEditMode()) {
+          Görev bilgilerini güncelleyin.
+        } @else {
+          Yeni görevin bilgilerini girin.
+        }
+      </p>
+    </div>
+  </header>
+
+  @if (isLoading()) {
+    <div class="state-container">
+      <mat-spinner diameter="48" />
+
+      <p>Görev bilgileri yükleniyor...</p>
+    </div>
+  } @else {
+    <form
+      class="task-form"
+      [formGroup]="form"
+      (ngSubmit)="save()"
+    >
+      @if (errorMessage()) {
+        <div class="error-message">
+          <mat-icon>error_outline</mat-icon>
+
+          <span>{{ errorMessage() }}</span>
+        </div>
+      }
+
+      <mat-form-field appearance="outline">
+        <mat-label>Başlık</mat-label>
+
+        <input
+          matInput
+          type="text"
+          formControlName="title"
+          maxlength="200"
+          placeholder="Görev başlığını girin"
+        />
+
+        <mat-hint align="end">
+          {{ form.controls.title.value?.length ?? 0 }}/200
+        </mat-hint>
+
+        @if (
+          form.controls.title.hasError('required') &&
+          form.controls.title.touched
+        ) {
+          <mat-error>
+            Görev başlığı zorunludur.
+          </mat-error>
+        }
+
+        @if (
+          form.controls.title.hasError('maxlength') &&
+          form.controls.title.touched
+        ) {
+          <mat-error>
+            Başlık en fazla 200 karakter olabilir.
+          </mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Açıklama</mat-label>
+
+        <textarea
+          matInput
+          formControlName="description"
+          rows="5"
+          placeholder="Görev açıklamasını girin"
+        ></textarea>
+      </mat-form-field>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Öncelik</mat-label>
+
+          <mat-select formControlName="priority">
+            <mat-option [value]="Priority.Lowest">
+              Çok Düşük
+            </mat-option>
+
+            <mat-option [value]="Priority.Low">
+              Düşük
+            </mat-option>
+
+            <mat-option [value]="Priority.Medium">
+              Orta
+            </mat-option>
+
+            <mat-option [value]="Priority.High">
+              Yüksek
+            </mat-option>
+
+            <mat-option [value]="Priority.Highest">
+              Çok Yüksek
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        @if (isEditMode()) {
+          <mat-form-field appearance="outline">
+            <mat-label>Durum</mat-label>
+
+            <mat-select formControlName="status">
+              <mat-option
+                [value]="TaskItemStatus.Pending"
+              >
+                Bekliyor
+              </mat-option>
+
+              <mat-option
+                [value]="TaskItemStatus.InProgress"
+              >
+                Devam Ediyor
+              </mat-option>
+
+              <mat-option
+                [value]="TaskItemStatus.Completed"
+              >
+                Tamamlandı
+              </mat-option>
+
+              <mat-option
+                [value]="TaskItemStatus.Cancelled"
+              >
+                İptal Edildi
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        }
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Kategori</mat-label>
+
+          <mat-select formControlName="categoryId">
+            <mat-option value="">
+              Kategori yok
+            </mat-option>
+
+            @for (
+              category of categories();
+              track category.id
+            ) {
+              <mat-option [value]="category.id">
+                {{ category.name }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Son tarih</mat-label>
+
+          <input
+            matInput
+            type="datetime-local"
+            formControlName="dueDate"
+          />
+
+          <mat-icon matSuffix>event</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <div class="form-actions">
+        <button
+          mat-stroked-button
+          type="button"
+          [disabled]="isSaving()"
+          (click)="cancel()"
+        >
+          İptal
+        </button>
+
+        <button
+          mat-flat-button
+          type="submit"
+          [disabled]="isSaving()"
+        >
+          @if (isSaving()) {
+            <mat-spinner diameter="20" />
+          } @else {
+            <mat-icon>save</mat-icon>
+          }
+
+          @if (isEditMode()) {
+            Güncelle
+          } @else {
+            Oluştur
+          }
+        </button>
+      </div>
+    </form>
+  }
+</section>
