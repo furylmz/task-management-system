@@ -1,0 +1,63 @@
+:host {
+  display: block;
+}
+
+.navigation {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  min-height: 64px;
+  padding: 0 24px;
+  gap: 16px;
+}
+
+.brand {
+  color: inherit;
+  font-size: 1.15rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.desktop-navigation {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.desktop-navigation a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.navigation-spacer {
+  flex: 1 1 auto;
+}
+
+.active-link {
+  background-color: color-mix(
+    in srgb,
+    currentColor 12%,
+    transparent
+  );
+}
+
+.user-menu-button {
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .navigation {
+    padding: 0 12px;
+  }
+
+  .desktop-navigation {
+    display: none;
+  }
+
+  .user-name {
+    display: none;
+  }
+}

@@ -5,12 +5,9 @@ import {
   ReactiveFormsModule,
   ValidationErrors,
   ValidatorFn,
-  Validators
+  Validators,
 } from '@angular/forms';
-import {
-  Router,
-  RouterLink
-} from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
 import { ApiErrorResponse } from '../../../core/models/api-response.model';
@@ -19,12 +16,9 @@ import { AuthService } from '../../../core/services/auth';
 
 @Component({
   selector: 'app-register',
-  imports: [
-    ReactiveFormsModule,
-    RouterLink
-  ],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './register.html',
-  styleUrl: './register.css'
+  styleUrl: './register.css',
 })
 export class Register {
   private readonly formBuilder = inject(FormBuilder);
@@ -33,57 +27,21 @@ export class Register {
 
   readonly registerForm = this.formBuilder.nonNullable.group(
     {
-      firstName: [
-        '',
-        [
-          Validators.required,
-          Validators.maxLength(50)
-        ]
-      ],
+      firstName: ['', [Validators.required, Validators.maxLength(50)]],
 
-      lastName: [
-        '',
-        [
-          Validators.required,
-          Validators.maxLength(50)
-        ]
-      ],
+      lastName: ['', [Validators.required, Validators.maxLength(50)]],
 
-      username: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(3),
-          Validators.maxLength(50)
-        ]
-      ],
+      username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
 
-      email: [
-        '',
-        [
-          Validators.required,
-          Validators.email
-        ]
-      ],
+      email: ['', [Validators.required, Validators.email]],
 
-      password: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(6)
-        ]
-      ],
+      password: ['', [Validators.required, Validators.minLength(6)]],
 
-      confirmPassword: [
-        '',
-        [
-          Validators.required
-        ]
-      ]
+      confirmPassword: ['', [Validators.required]],
     },
     {
-      validators: this.passwordMatchValidator()
-    }
+      validators: this.passwordMatchValidator(),
+    },
   );
 
   readonly isLoading = signal(false);
@@ -96,7 +54,7 @@ export class Register {
     }
 
     this.isLoading.set(true);
-  this.errorMessage.set('');
+    this.errorMessage.set('');
 
     const formValue = this.registerForm.getRawValue();
 
@@ -105,47 +63,42 @@ export class Register {
       lastName: formValue.lastName,
       username: formValue.username,
       email: formValue.email,
-      password: formValue.password
+      password: formValue.password,
     };
 
-    this.authService.register(request)
+    this.authService
+      .register(request)
       .pipe(
         finalize(() => {
           this.isLoading.set(false);
-        })
+        }),
       )
       .subscribe({
         next: () => {
-          this.router.navigate(
-            ['/login'],
-            {
-              queryParams: {
-                registered: true
-              }
-            }
-          );
+          this.router.navigate(['/login'], {
+            queryParams: {
+              registered: true,
+            },
+          });
         },
 
         error: (error: ApiErrorResponse) => {
           this.errorMessage.set(error.message);
-        }
+        },
       });
   }
 
   private passwordMatchValidator(): ValidatorFn {
-    return (
-      control: AbstractControl
-    ): ValidationErrors | null => {
+    return (control: AbstractControl): ValidationErrors | null => {
       const password = control.get('password')?.value;
-      const confirmPassword =
-        control.get('confirmPassword')?.value;
+      const confirmPassword = control.get('confirmPassword')?.value;
 
       if (password === confirmPassword) {
         return null;
       }
 
       return {
-        passwordMismatch: true
+        passwordMismatch: true,
       };
     };
   }

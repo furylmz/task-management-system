@@ -4,16 +4,11 @@ import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import {
-  LoginRequest,
-  LoginResponse,
-  RegisterRequest,
-  JwtPayload
-} from '../models/auth.model';
+import { LoginRequest, LoginResponse, RegisterRequest, JwtPayload } from '../models/auth.model';
 import { User } from '../models/user.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   private readonly http = inject(HttpClient);
@@ -38,28 +33,14 @@ export class AuthService {
 
     this.scheduleAutoLogout(token);
   }
-  
+
   login(request: LoginRequest): Observable<LoginResponse> {
-    return this.http
-      .post<LoginResponse>(
-        `${this.apiUrl}/login`,
-        request
-      )
-      .pipe(
-        tap(response => {
-          localStorage.setItem(
-            this.tokenKey,
-            response.token
-          );
-
-          localStorage.setItem(
-            this.userKey,
-            JSON.stringify(response.user)
-          );
-
-          this.scheduleAutoLogout(response.token);
-        })
-      );
+    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, request).pipe(
+      tap((response) => {
+        this.storeSession(response);
+        this.scheduleAutoLogout(response.token);
+      }),
+    );
   }
 
   register(request: RegisterRequest): Observable<User> {
@@ -95,26 +76,23 @@ export class AuthService {
   }
 
   isAuthenticated(): boolean {
-  const token = this.getToken();
+    const token = this.getToken();
 
-  if (!token) {
-    return false;
+    if (!token) {
+      return false;
+    }
+
+    if (this.isTokenExpired(token)) {
+      this.clearSession();
+      return false;
+    }
+
+    return true;
   }
-
-  if (this.isTokenExpired(token)) {
-    this.clearSession();
-    return false;
-  }
-
-  return true;
-}
 
   private storeSession(response: LoginResponse): void {
     localStorage.setItem(this.tokenKey, response.token);
-    localStorage.setItem(
-      this.userKey,
-      JSON.stringify(response.user)
-    );
+    localStorage.setItem(this.userKey, JSON.stringify(response.user));
   }
 
   private decodeToken(token: string): JwtPayload | null {
@@ -125,19 +103,13 @@ export class AuthService {
         return null;
       }
 
-      const payload = parts[1]
-        .replace(/-/g, '+')
-        .replace(/_/g, '/');
+      const payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
 
       const decodedPayload = decodeURIComponent(
         atob(payload)
           .split('')
-          .map(character =>
-            `%${character.charCodeAt(0)
-              .toString(16)
-              .padStart(2, '0')}`
-          )
-          .join('')
+          .map((character) => `%${character.charCodeAt(0).toString(16).padStart(2, '0')}`)
+          .join(''),
       );
 
       return JSON.parse(decodedPayload) as JwtPayload;

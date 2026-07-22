@@ -1,0 +1,63 @@
+<mat-toolbar class="navigation">
+  <a
+    class="brand"
+    routerLink="/dashboard"
+  >
+    Task Management
+  </a>
+
+  <nav class="desktop-navigation">
+    <a
+      mat-button
+      routerLink="/dashboard"
+      routerLinkActive="active-link"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <mat-icon>dashboard</mat-icon>
+      Dashboard
+    </a>
+
+    <a
+      mat-button
+      routerLink="/tasks"
+      routerLinkActive="active-link"
+    >
+      <mat-icon>checklist</mat-icon>
+      Görevler
+    </a>
+
+    <a
+      mat-button
+      routerLink="/categories"
+      routerLinkActive="active-link"
+    >
+      <mat-icon>category</mat-icon>
+      Kategoriler
+    </a>
+  </nav>
+
+  <span class="navigation-spacer"></span>
+
+  <button
+    mat-button
+    class="user-menu-button"
+    [matMenuTriggerFor]="userMenu"
+  >
+    <mat-icon>account_circle</mat-icon>
+    <span class="user-name">
+      {{ displayName() }}
+    </span>
+    <mat-icon>arrow_drop_down</mat-icon>
+  </button>
+
+  <mat-menu #userMenu="matMenu">
+    <button
+      mat-menu-item
+      type="button"
+      (click)="logout()"
+    >
+      <mat-icon>logout</mat-icon>
+      <span>Çıkış Yap</span>
+    </button>
+  </mat-menu>
+</mat-toolbar>

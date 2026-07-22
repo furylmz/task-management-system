@@ -1,40 +1,51 @@
 import { Routes } from '@angular/router';
+
 import { authGuard } from './core/guards/auth-guard';
 
 export const routes: Routes = [
   {
-    path: '',
-    redirectTo: 'tasks',
-    pathMatch: 'full'
-  },
-  {
     path: 'login',
-    loadComponent: () =>
-      import('./features/auth/login/login')
-        .then(component => component.Login)
+    loadComponent: () => import('./features/auth/login/login').then((component) => component.Login),
   },
   {
     path: 'register',
     loadComponent: () =>
-      import('./features/auth/register/register')
-        .then(component => component.Register)
+      import('./features/auth/register/register').then((component) => component.Register),
   },
   {
-    path: 'tasks',
+    path: '',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./features/tasks/task-list/task-list')
-        .then(component => component.TaskList)
-  },
-  {
-  path: 'categories',
-  canActivate: [authGuard],
-  loadComponent: () =>
-    import('./features/categories/category-list/category-list')
-      .then(component => component.CategoryList)
+      import('./shared/layouts/main-layout/main-layout').then((component) => component.MainLayout),
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./features/dashboard/dashboard/dashboard').then(
+            (component) => component.Dashboard,
+          ),
+      },
+      {
+        path: 'tasks',
+        loadComponent: () =>
+          import('./features/tasks/task-list/task-list').then((component) => component.TaskList),
+      },
+      {
+        path: 'categories',
+        loadComponent: () =>
+          import('./features/categories/category-list/category-list').then(
+            (component) => component.CategoryList,
+          ),
+      },
+      {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'dashboard',
+      },
+    ],
   },
   {
     path: '**',
-    redirectTo: 'tasks'
-  }
+    redirectTo: 'dashboard',
+  },
 ];
