@@ -18,6 +18,135 @@
     </button>
   </header>
 
+  <div class="task-toolbar">
+    <mat-form-field
+      appearance="outline"
+      class="search-field"
+    >
+      <mat-label>Görev ara</mat-label>
+
+      <mat-icon matPrefix>search</mat-icon>
+
+      <input
+        matInput
+        type="text"
+        [formControl]="searchControl"
+        placeholder="Başlık veya açıklama ara"
+      />
+
+      @if (searchControl.value) {
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          aria-label="Aramayı temizle"
+          (click)="clearSearch()"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </mat-form-field>
+
+    <form
+      class="filter-form"
+      [formGroup]="filterForm"
+    >
+      <mat-form-field appearance="outline">
+        <mat-label>Öncelik</mat-label>
+
+        <mat-select formControlName="priority">
+          <mat-option [value]="null">
+            Tüm öncelikler
+          </mat-option>
+
+          <mat-option [value]="Priority.Lowest">
+            En düşük
+          </mat-option>
+
+          <mat-option [value]="Priority.Low">
+            Düşük
+          </mat-option>
+
+          <mat-option [value]="Priority.Medium">
+            Orta
+          </mat-option>
+
+          <mat-option [value]="Priority.High">
+            Yüksek
+          </mat-option>
+
+          <mat-option [value]="Priority.Highest">
+            En yüksek
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Durum</mat-label>
+
+        <mat-select formControlName="status">
+          <mat-option [value]="null">
+            Tüm durumlar
+          </mat-option>
+
+          <mat-option [value]="TaskItemStatus.Pending">
+            Bekliyor
+          </mat-option>
+
+          <mat-option [value]="TaskItemStatus.InProgress">
+            Devam ediyor
+          </mat-option>
+
+          <mat-option [value]="TaskItemStatus.Completed">
+            Tamamlandı
+          </mat-option>
+
+          <mat-option [value]="TaskItemStatus.Cancelled">
+            İptal edildi
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Kategori</mat-label>
+
+        <mat-select formControlName="categoryId">
+          <mat-option [value]="null">
+            Tüm kategoriler
+          </mat-option>
+
+          @for (category of categories(); track category.id) {
+            <mat-option [value]="category.id">
+              {{ category.name }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Son tarih</mat-label>
+
+        <input
+          matInput
+          type="date"
+          formControlName="dueDate"
+        />
+      </mat-form-field>
+    </form>
+
+    @if (hasActiveFilters()) {
+      <button
+        mat-stroked-button
+        type="button"
+        class="clear-filters-button"
+        (click)="clearFilters()"
+      >
+        <mat-icon>filter_alt_off</mat-icon>
+        Filtreleri Temizle
+      </button>
+    }
+  </div>
+
   @if (isLoading()) {
     <div class="state-container">
       <mat-spinner diameter="48" />
@@ -43,22 +172,41 @@
     </div>
   } @else if (tasks().length === 0) {
     <div class="state-container empty-state">
-      <mat-icon>task_alt</mat-icon>
+      <mat-icon>
+        {{ hasActiveFilters() ? 'search_off' : 'task_alt' }}
+      </mat-icon>
 
-      <h2>Henüz görev bulunmuyor</h2>
+      @if (hasActiveFilters()) {
+        <h2>Görev bulunamadı</h2>
 
-      <p>
-        İlk görevinizi oluşturarak başlayabilirsiniz.
-      </p>
+        <p>
+          Seçtiğiniz arama ve filtrelerle eşleşen bir görev bulunmuyor.
+        </p>
 
-      <button
-        mat-flat-button
-        type="button"
-        (click)="createTask()"
-      >
-        <mat-icon>add</mat-icon>
-        Görev Oluştur
-      </button>
+        <button
+          mat-stroked-button
+          type="button"
+          (click)="clearFilters()"
+        >
+          <mat-icon>filter_alt_off</mat-icon>
+          Filtreleri Temizle
+        </button>
+      } @else {
+        <h2>Henüz görev bulunmuyor</h2>
+
+        <p>
+          İlk görevinizi oluşturarak başlayabilirsiniz.
+        </p>
+
+        <button
+          mat-flat-button
+          type="button"
+          (click)="createTask()"
+        >
+          <mat-icon>add</mat-icon>
+          Görev Oluştur
+        </button>
+      }
     </div>
   } @else {
     <div class="task-summary">
@@ -75,5 +223,15 @@
         />
       }
     </div>
+
+    <mat-paginator
+      [length]="totalCount()"
+      [pageIndex]="pageNumber() - 1"
+      [pageSize]="pageSize()"
+      [pageSizeOptions]="pageSizeOptions"
+      [showFirstLastButtons]="true"
+      aria-label="Görev sayfaları"
+      (page)="onPageChange($event)"
+    />
   }
 </section>
