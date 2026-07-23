@@ -3,14 +3,22 @@ export enum Priority {
   Low = 2,
   Medium = 3,
   High = 4,
-  Highest = 5
+  Highest = 5,
 }
 
 export enum TaskItemStatus {
   Pending = 0,
   InProgress = 1,
   Completed = 2,
-  Cancelled = 3
+  Cancelled = 3,
+}
+
+export enum TaskSortField {
+  CreatedAt = 'CreatedAt',
+  DueDate = 'DueDate',
+  Title = 'Title',
+  Priority = 'Priority',
+  Status = 'Status',
 }
 
 export interface TaskItem {
@@ -49,6 +57,10 @@ export interface TaskQueryParams {
   status?: TaskItemStatus;
   categoryId?: string;
   dueDate?: string;
+
+  sortBy?: TaskSortField;
+  descending?: boolean;
+
   pageNumber?: number;
   pageSize?: number;
 }

@@ -132,6 +132,45 @@
           formControlName="dueDate"
         />
       </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Sıralama</mat-label>
+
+        <mat-select formControlName="sortBy">
+          <mat-option [value]="TaskSortField.CreatedAt">
+            Oluşturulma tarihi
+          </mat-option>
+
+          <mat-option [value]="TaskSortField.DueDate">
+            Son tarih
+          </mat-option>
+
+          <mat-option [value]="TaskSortField.Title">
+            Başlık
+          </mat-option>
+
+          <mat-option [value]="TaskSortField.Priority">
+            Öncelik
+          </mat-option>
+
+          <mat-option [value]="TaskSortField.Status">
+            Durum
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Sıralama yönü</mat-label>
+
+        <mat-select formControlName="descending">
+          <mat-option [value]="false">
+            Artan
+          </mat-option>
+
+          <mat-option [value]="true">
+            Azalan
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
     </form>
 
     @if (hasActiveFilters()) {

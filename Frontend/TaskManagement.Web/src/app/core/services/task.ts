@@ -9,26 +9,23 @@ import {
   TaskItem,
   TaskQueryParams,
   TaskStatistics,
-  UpdateTaskRequest
+  UpdateTaskRequest,
 } from '../models/task.model';
 
 import { PagedResult } from '../models/api-response.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TaskService {
-
   private readonly http = inject(HttpClient);
 
   private readonly apiUrl = `${environment.apiUrl}/Tasks`;
 
   getAll(query?: TaskQueryParams): Observable<PagedResult<TaskItem>> {
-
     let params = new HttpParams();
 
     if (query) {
-
       if (query.searchTerm) {
         params = params.set('SearchTerm', query.searchTerm);
       }
@@ -49,6 +46,14 @@ export class TaskService {
         params = params.set('DueDate', query.dueDate);
       }
 
+      if (query.sortBy !== undefined) {
+        params = params.set('SortBy', query.sortBy);
+      }
+
+      if (query.descending !== undefined) {
+        params = params.set('Descending', query.descending);
+      }
+
       if (query.pageNumber) {
         params = params.set('PageNumber', query.pageNumber);
       }
@@ -56,13 +61,11 @@ export class TaskService {
       if (query.pageSize) {
         params = params.set('PageSize', query.pageSize);
       }
-
     }
 
     return this.http.get<PagedResult<TaskItem>>(this.apiUrl, {
-      params
+      params,
     });
-
   }
 
   getById(id: string): Observable<TaskItem> {
@@ -88,5 +91,4 @@ export class TaskService {
   getStatistics(): Observable<TaskStatistics> {
     return this.http.get<TaskStatistics>(`${this.apiUrl}/statistics`);
   }
-
 }

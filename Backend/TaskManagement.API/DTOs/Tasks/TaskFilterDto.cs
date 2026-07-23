@@ -15,6 +15,9 @@ public class TaskFilterDto
 
     public DateTime? DueDate { get; set; }
 
+    public TaskSortField SortBy { get; set; } = TaskSortField.CreatedAt;
+
+    public bool Descending { get; set; } = true;
 
     [Range(1, int.MaxValue)]
     public int PageNumber { get; set; } = 1;

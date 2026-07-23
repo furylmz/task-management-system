@@ -16,7 +16,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 
-import { Priority, TaskItem, TaskItemStatus } from '../../../core/models/task.model';
+import { Priority, TaskItem, TaskItemStatus, TaskSortField } from '../../../core/models/task.model';
 
 import { Category } from '../../../core/models/category.model';
 
@@ -61,7 +61,7 @@ export class TaskList implements OnInit {
   readonly errorMessage = signal<string | null>(null);
 
   readonly pageNumber = signal(1);
-  readonly pageSize = signal(12);
+  readonly pageSize = signal(10);
   readonly totalCount = signal(0);
   readonly totalPages = signal(0);
 
@@ -71,6 +71,7 @@ export class TaskList implements OnInit {
 
   readonly Priority = Priority;
   readonly TaskItemStatus = TaskItemStatus;
+  readonly TaskSortField = TaskSortField;
 
   readonly searchControl = new FormControl('', {
     nonNullable: true,
@@ -81,6 +82,14 @@ export class TaskList implements OnInit {
     status: new FormControl<TaskItemStatus | null>(null),
     categoryId: new FormControl<string | null>(null),
     dueDate: new FormControl<string | null>(null),
+
+    sortBy: new FormControl<TaskSortField>(TaskSortField.CreatedAt, {
+      nonNullable: true,
+    }),
+
+    descending: new FormControl<boolean>(true, {
+      nonNullable: true,
+    }),
   });
 
   ngOnInit(): void {
@@ -144,6 +153,10 @@ export class TaskList implements OnInit {
         dueDate: this.isValidDate(filters.dueDate)
           ? new Date(filters.dueDate!).toISOString()
           : undefined,
+
+        sortBy: filters.sortBy,
+        descending: filters.descending,
+
         pageNumber: this.pageNumber(),
         pageSize: this.pageSize(),
       })
@@ -203,6 +216,8 @@ export class TaskList implements OnInit {
         status: null,
         categoryId: null,
         dueDate: null,
+        sortBy: TaskSortField.CreatedAt,
+        descending: true,
       },
       {
         emitEvent: false,

@@ -177,9 +177,52 @@ public class TaskService : ITaskService
 
         var totalCount = await query.CountAsync();
 
+        query = (filterDto.SortBy, filterDto.Descending) switch
+        {
+            (TaskSortField.Title, false) =>
+                query.OrderBy(x => x.Title)
+                     .ThenBy(x => x.Id),
+
+            (TaskSortField.Title, true) =>
+                query.OrderByDescending(x => x.Title)
+                     .ThenBy(x => x.Id),
+
+            (TaskSortField.Priority, false) =>
+                query.OrderBy(x => x.Priority)
+                     .ThenBy(x => x.Id),
+
+            (TaskSortField.Priority, true) =>
+                query.OrderByDescending(x => x.Priority)
+                     .ThenBy(x => x.Id),
+
+            (TaskSortField.Status, false) =>
+                query.OrderBy(x => x.Status)
+                     .ThenBy(x => x.Id),
+
+            (TaskSortField.Status, true) =>
+                query.OrderByDescending(x => x.Status)
+                     .ThenBy(x => x.Id),
+
+            (TaskSortField.DueDate, false) =>
+                query.OrderBy(x => x.DueDate == null)
+                    .ThenBy(x => x.DueDate)
+                    .ThenBy(x => x.Id),
+
+            (TaskSortField.DueDate, true) =>
+                query.OrderBy(x => x.DueDate == null)
+                     .ThenByDescending(x => x.DueDate)
+                     .ThenBy(x => x.Id),
+
+            (TaskSortField.CreatedAt, false) =>
+                query.OrderBy(x => x.CreatedAt)
+                     .ThenBy(x => x.Id),
+
+            _ =>
+                query.OrderByDescending(x => x.CreatedAt)
+                     .ThenBy(x => x.Id)
+        };
+
         var tasks = await query
-            .OrderByDescending(x => x.CreatedAt)
-            .ThenBy(x => x.Id)
             .Skip((filterDto.PageNumber - 1) * filterDto.PageSize)
             .Take(filterDto.PageSize)
             .ToListAsync();
