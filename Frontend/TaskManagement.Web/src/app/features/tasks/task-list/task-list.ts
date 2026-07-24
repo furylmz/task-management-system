@@ -15,6 +15,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { Priority, TaskItem, TaskItemStatus, TaskSortField } from '../../../core/models/task.model';
 
@@ -52,6 +53,7 @@ export class TaskList implements OnInit {
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly snackBar = inject(MatSnackBar);
 
   readonly tasks = signal<TaskItem[]>([]);
   readonly categories = signal<Category[]>([]);
@@ -291,17 +293,15 @@ export class TaskList implements OnInit {
       )
       .subscribe({
         next: () => {
+          this.snackBar.open('Görev silindi.', 'Tamam', {
+            duration: 3000,
+          });
           const isLastItemOnPage = this.tasks().length === 1;
           const isNotFirstPage = this.pageNumber() > 1;
-
           if (isLastItemOnPage && isNotFirstPage) {
             this.pageNumber.update((currentPage) => currentPage - 1);
           }
-
           this.loadTasks();
-        },
-        error: (error) => {
-          this.errorMessage.set(error?.error?.message ?? 'Görev silinirken bir hata oluştu.');
         },
       });
   }

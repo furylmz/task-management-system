@@ -12,6 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { Category } from '../../../core/models/category.model';
 
@@ -45,6 +46,7 @@ export class TaskForm implements OnInit {
   private readonly categoryService = inject(CategoryService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly snackBar = inject(MatSnackBar);
 
   readonly Priority = Priority;
   readonly TaskItemStatus = TaskItemStatus;
@@ -156,6 +158,9 @@ export class TaskForm implements OnInit {
       )
       .subscribe({
         next: () => {
+          this.snackBar.open('Görev başarıyla oluşturuldu.', 'Tamam', {
+            duration: 3000,
+          });
           this.router.navigate(['/tasks']);
         },
         error: (error) => {
@@ -185,6 +190,9 @@ export class TaskForm implements OnInit {
       )
       .subscribe({
         next: () => {
+          this.snackBar.open('Görev güncellendi.', 'Tamam', {
+            duration: 3000,
+          });
           this.router.navigate(['/tasks']);
         },
         error: (error) => {

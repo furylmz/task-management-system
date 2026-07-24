@@ -1,7 +1,8 @@
-import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, DestroyRef, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -10,6 +11,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSnackBar } from '@angular/material/snack-bar';
+
 import { Category } from '../../../core/models/category.model';
 import { CategoryService } from '../../../core/services/category';
 import {
@@ -36,6 +39,8 @@ export class CategoryList implements OnInit {
   private readonly formBuilder = inject(FormBuilder);
   private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly snackBar = inject(MatSnackBar);
+
   readonly categories = signal<Category[]>([]);
   readonly isLoading = signal(false);
   readonly isSaving = signal(false);
@@ -48,6 +53,9 @@ export class CategoryList implements OnInit {
     description: [''],
     color: [''],
   });
+
+  @ViewChild(FormGroupDirective) formDir!: FormGroupDirective;
+
   ngOnInit(): void {
     this.loadCategories();
   }
@@ -77,7 +85,7 @@ export class CategoryList implements OnInit {
 
   cancelEdit(): void {
     this.editingId.set(null);
-    this.form.reset();
+    this.formDir.resetForm({ name: '', description: '', color: '' });
     this.errorMessage.set(null);
   }
   save(): void {
@@ -107,7 +115,8 @@ export class CategoryList implements OnInit {
       )
       .subscribe({
         next: () => {
-          this.form.reset();
+          this.snackBar.open('Kategori oluşturuldu.', 'Tamam', { duration: 3000 });
+          this.formDir.resetForm({ name: '', description: '', color: '' });
           this.loadCategories();
         },
         error: (error) => this.errorMessage.set(error.message),
@@ -129,6 +138,7 @@ export class CategoryList implements OnInit {
       )
       .subscribe({
         next: () => {
+          this.snackBar.open('Kategori güncellendi.', 'Tamam', { duration: 3000 });
           this.cancelEdit();
           this.loadCategories();
         },
@@ -166,7 +176,10 @@ export class CategoryList implements OnInit {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
-        next: () => this.loadCategories(),
+        next: () => {
+          this.snackBar.open('Kategori silindi.', 'Tamam', { duration: 3000 });
+          this.loadCategories();
+        },
         error: (error) => this.errorMessage.set(error.message),
       });
   }
