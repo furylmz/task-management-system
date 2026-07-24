@@ -39,6 +39,17 @@
   <span class="navigation-spacer"></span>
 
   <button
+    mat-icon-button
+    type="button"
+    [matTooltip]="themeService.isDark() ? 'Açık temaya geç' : 'Koyu temaya geç'"
+    (click)="themeService.toggle()"
+  >
+    <mat-icon>
+      {{ themeService.isDark() ? 'light_mode' : 'dark_mode' }}
+    </mat-icon>
+  </button>
+
+  <button
     mat-button
     class="user-menu-button"
     [matMenuTriggerFor]="userMenu"
