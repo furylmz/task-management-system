@@ -170,4 +170,188 @@
       </mat-card-actions>
     </mat-card>
   }
+  <section class="comments-section">
+    <h2 class="section-title">
+      <mat-icon>comment</mat-icon>
+      Yorumlar
+      @if (comments().length > 0) {
+        <span class="comment-count">({{ comments().length }})</span>
+      }
+    </h2>
+    <!-- Yorum yazma / düzenleme formu -->
+    <mat-card class="comment-form-card">
+      <mat-card-content>
+        <form [formGroup]="commentForm" (ngSubmit)="saveComment()">
+          <mat-form-field appearance="outline" class="comment-field">
+            <mat-label>
+              {{ editingCommentId() ? 'Yorumu düzenle' : 'Yorum yaz' }}
+            </mat-label>
+            <textarea
+              matInput
+              formControlName="comment"
+              rows="3"
+              maxlength="1000"
+              placeholder="Yorumunuzu buraya yazın..."
+            ></textarea>
+            <mat-hint align="end">
+              {{ commentForm.controls.comment.value?.length ?? 0 }}/1000
+            </mat-hint>
+            @if (commentForm.controls.comment.hasError('required') &&
+                commentForm.controls.comment.touched) {
+              <mat-error>Yorum boş bırakılamaz.</mat-error>
+            }
+          </mat-form-field>
+          <div class="comment-form-actions">
+            @if (editingCommentId()) {
+              <button
+                mat-stroked-button
+                type="button"
+                [disabled]="isSavingComment()"
+                (click)="cancelEditComment()"
+              >
+                İptal
+              </button>
+            }
+            <button
+              mat-flat-button
+              type="submit"
+              [disabled]="isSavingComment()"
+            >
+              @if (isSavingComment()) {
+                <mat-spinner diameter="20" />
+              } @else {
+                <mat-icon>{{ editingCommentId() ? 'save' : 'send' }}</mat-icon>
+              }
+              {{ editingCommentId() ? 'Güncelle' : 'Gönder' }}
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+    <!-- Yorumlar listesi -->
+    @if (isLoadingComments()) {
+      <div class="state-container">
+        <mat-spinner diameter="32" />
+      </div>
+    } @else if (comments().length === 0) {
+      <p class="no-comments">Henüz yorum yapılmamış. İlk yorumu sen yap!</p>
+    } @else {
+      <div class="comments-list">
+        @for (comment of comments(); track comment.id) {
+          <mat-card
+            class="comment-card"
+            [class.comment-card--editing]="editingCommentId() === comment.id"
+          >
+            <mat-card-content>
+              <div class="comment-header">
+                <mat-icon class="comment-avatar">account_circle</mat-icon>
+                <span class="comment-date">
+                  {{ comment.createdAt | date: 'dd.MM.yyyy HH:mm' }}
+                </span>
+                <!-- Sadece kendi yorumunda düzenle/sil göster -->
+                @if (comment.userId === currentUserId()) {
+                  <div class="comment-actions">
+                    <button
+                      mat-icon-button
+                      type="button"
+                      (click)="startEditComment(comment)"
+                    >
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button
+                      mat-icon-button
+                      type="button"
+                      class="delete-button"
+                      (click)="deleteComment(comment.id)"
+                    >
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
+                }
+              </div>
+              <p class="comment-text">{{ comment.comment }}</p>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    }
+  </section>
+  <section class="attachments-section">
+    <h2 class="section-title">
+      <mat-icon>attach_file</mat-icon>
+      Dosyalar
+      @if (attachments().length > 0) {
+        <span class="comment-count">({{ attachments().length }})</span>
+      }
+    </h2>
+
+    <div class="upload-area">
+      <input
+        type="file"
+        id="file-upload"
+        class="file-input"
+        (change)="onFileSelected($event)"
+        [disabled]="isUploading()"
+      />
+
+      <label for="file-upload" class="upload-label">
+        @if (isUploading()) {
+          <mat-spinner diameter="20" />
+          <span>Yükleniyor...</span>
+        } @else {
+          <mat-icon>upload</mat-icon>
+          <span>Dosya Seç ve Yükle</span>
+        }
+      </label>
+    </div>
+
+    @if (isLoadingAttachments()) {
+      <div class="state-container">
+        <mat-spinner diameter="32" />
+      </div>
+    } @else if (attachments().length === 0) {
+      <p class="no-comments">Henüz dosya eklenmemiş.</p>
+    } @else {
+      <div class="attachments-list">
+        @for (attachment of attachments(); track attachment.id) {
+          <mat-card class="attachment-card">
+            <mat-card-content>
+              <div class="attachment-row">
+                <mat-icon class="attachment-icon">insert_drive_file</mat-icon>
+
+                <div class="attachment-info">
+                  <p class="attachment-name">{{ attachment.fileName }}</p>
+                  <p class="attachment-meta">
+                    {{ formatFileSize(attachment.fileSize) }} ·
+                    {{ attachment.uploadedAt | date: 'dd.MM.yyyy HH:mm' }}
+                  </p>
+                </div>
+
+                <div class="attachment-actions">
+                  <button
+                    mat-icon-button
+                    type="button"
+                    matTooltip="İndir"
+                    (click)="downloadAttachment(attachment)"
+                  >
+                    <mat-icon>download</mat-icon>
+                  </button>
+
+                  <button
+                    mat-icon-button
+                    type="button"
+                    class="delete-button"
+                    matTooltip="Sil"
+                    (click)="deleteAttachment(attachment.id)"
+                  >
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    }
+  </section>
 </section>

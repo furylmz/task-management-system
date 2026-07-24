@@ -159,3 +159,146 @@
     grid-template-columns: 1fr;
   }
 }
+
+/*Comments*/
+.comments-section {
+  margin-top: 32px;
+}
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px;
+  font-size: 1.15rem;
+}
+.comment-count {
+  font-weight: 400;
+  opacity: 0.65;
+}
+.comment-form-card {
+  margin-bottom: 20px;
+  border-radius: 12px;
+}
+.comment-field {
+  width: 100%;
+}
+.comment-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+}
+.no-comments {
+  opacity: 0.6;
+  font-style: italic;
+  margin: 0;
+}
+.comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.comment-card {
+  border-radius: 12px;
+  transition: box-shadow 150ms ease;
+}
+.comment-card--editing {
+  outline: 2px solid var(--mat-sys-primary);
+}
+.comment-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.comment-avatar {
+  width: 32px;
+  height: 32px;
+  font-size: 32px;
+  opacity: 0.5;
+}
+.comment-date {
+  font-size: 0.8rem;
+  opacity: 0.6;
+  flex: 1;
+}
+.comment-actions {
+  display: flex;
+  gap: 2px;
+}
+.comment-actions .delete-button {
+  color: var(--mat-sys-error);
+}
+.comment-text {
+  margin: 0;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+/*Attachments*/
+.attachments-section {
+  margin-top: 32px;
+}
+.file-input {
+  display: none;
+}
+.upload-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 2px dashed var(--mat-sys-outline);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: border-color 150ms ease, background-color 150ms ease;
+  margin-bottom: 16px;
+}
+.upload-label:hover {
+  border-color: var(--mat-sys-primary);
+  background-color: color-mix(in srgb, var(--mat-sys-primary) 8%, transparent);
+}
+.upload-area {
+  margin-bottom: 16px;
+}
+.attachments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.attachment-card {
+  border-radius: 12px;
+}
+.attachment-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.attachment-icon {
+  flex-shrink: 0;
+  opacity: 0.5;
+}
+.attachment-info {
+  flex: 1;
+  min-width: 0;
+}
+.attachment-name {
+  margin: 0 0 2px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.attachment-meta {
+  margin: 0;
+  font-size: 0.8rem;
+  opacity: 0.6;
+}
+.attachment-actions {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.attachment-actions .delete-button {
+  color: var(--mat-sys-error);
+}
