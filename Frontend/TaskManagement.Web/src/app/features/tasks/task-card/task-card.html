@@ -7,7 +7,7 @@
         </mat-card-title>
 
         <mat-card-subtitle>
-          {{ getStatusLabel(task().status) }}
+          {{ task().status | statusLabel  }}
         </mat-card-subtitle>
       </div>
 
@@ -19,7 +19,7 @@
         [class.priority-high]="task().priority === Priority.High"
         [class.priority-highest]="task().priority === Priority.Highest"
       >
-        {{ getPriorityLabel(task().priority) }}
+        {{ task().priority | priorityLabel }}
       </span>
     </div>
   </mat-card-header>

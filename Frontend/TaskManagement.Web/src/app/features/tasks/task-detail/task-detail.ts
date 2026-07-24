@@ -1,10 +1,11 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { DatePipe } from '@angular/common';
 
 import { finalize } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -15,6 +16,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Priority, TaskItem, TaskItemStatus } from '../../../core/models/task.model';
 
 import { TaskService } from '../../../core/services/task';
+import { CategoryService } from '../../../core/services/category';
+
+import { PriorityLabelPipe } from '../../../shared/pipes/priority-label.pipe';
+import { StatusLabelPipe } from '../../../shared/pipes/status-label.pipe';
 
 @Component({
   selector: 'app-task-detail',
@@ -25,6 +30,8 @@ import { TaskService } from '../../../core/services/task';
     MatChipsModule,
     MatIconModule,
     MatProgressSpinnerModule,
+    PriorityLabelPipe,
+    StatusLabelPipe,
   ],
   templateUrl: './task-detail.html',
   styleUrl: './task-detail.css',
@@ -33,8 +40,11 @@ export class TaskDetail implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly taskService = inject(TaskService);
+  private readonly categoryService = inject(CategoryService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly task = signal<TaskItem | null>(null);
+  readonly categoryName = signal<string | null>(null);
   readonly isLoading = signal(false);
   readonly errorMessage = signal<string | null>(null);
 
@@ -64,17 +74,33 @@ export class TaskDetail implements OnInit {
         finalize(() => {
           this.isLoading.set(false);
         }),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: (task) => {
           this.task.set(task);
+
+          if (task.categoryId) {
+            this.loadCategoryName(task.categoryId);
+          }
         },
         error: (error) => {
           this.task.set(null);
+          this.errorMessage.set(error.message);
+        },
+      });
+  }
 
-          this.errorMessage.set(
-            error?.error?.message ?? 'Görev bilgileri yüklenirken bir hata oluştu.',
-          );
+  private loadCategoryName(categoryId: string): void {
+    this.categoryService
+      .getById(categoryId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (category) => {
+          this.categoryName.set(category.name);
+        },
+        error: () => {
+          this.categoryName.set(null);
         },
       });
   }
@@ -89,46 +115,5 @@ export class TaskDetail implements OnInit {
     }
 
     this.router.navigate(['/tasks', this.taskId, 'edit']);
-  }
-
-  getPriorityLabel(priority: Priority): string {
-    switch (priority) {
-      case Priority.Lowest:
-        return 'Çok Düşük';
-
-      case Priority.Low:
-        return 'Düşük';
-
-      case Priority.Medium:
-        return 'Orta';
-
-      case Priority.High:
-        return 'Yüksek';
-
-      case Priority.Highest:
-        return 'Çok Yüksek';
-
-      default:
-        return 'Bilinmiyor';
-    }
-  }
-
-  getStatusLabel(status: TaskItemStatus): string {
-    switch (status) {
-      case TaskItemStatus.Pending:
-        return 'Bekliyor';
-
-      case TaskItemStatus.InProgress:
-        return 'Devam Ediyor';
-
-      case TaskItemStatus.Completed:
-        return 'Tamamlandı';
-
-      case TaskItemStatus.Cancelled:
-        return 'İptal Edildi';
-
-      default:
-        return 'Bilinmiyor';
-    }
   }
 }

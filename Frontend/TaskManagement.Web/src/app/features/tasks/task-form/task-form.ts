@@ -1,10 +1,11 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { finalize } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -46,6 +47,7 @@ export class TaskForm implements OnInit {
   private readonly categoryService = inject(CategoryService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly snackBar = inject(MatSnackBar);
 
   readonly Priority = Priority;
@@ -81,14 +83,17 @@ export class TaskForm implements OnInit {
   }
 
   private loadCategories(): void {
-    this.categoryService.getAll().subscribe({
-      next: (categories) => {
-        this.categories.set(categories);
-      },
-      error: () => {
-        this.categories.set([]);
-      },
-    });
+    this.categoryService
+      .getAll()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (categories) => {
+          this.categories.set(categories);
+        },
+        error: () => {
+          this.categories.set([]);
+        },
+      });
   }
 
   private loadTask(taskId: string): void {
@@ -101,6 +106,7 @@ export class TaskForm implements OnInit {
         finalize(() => {
           this.isLoading.set(false);
         }),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: (task) => {
@@ -114,9 +120,7 @@ export class TaskForm implements OnInit {
           });
         },
         error: (error) => {
-          this.errorMessage.set(
-            error?.error?.message ?? 'Görev bilgileri yüklenirken bir hata oluştu.',
-          );
+          this.errorMessage.set(error.message);
         },
       });
   }
@@ -155,6 +159,7 @@ export class TaskForm implements OnInit {
         finalize(() => {
           this.isSaving.set(false);
         }),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: () => {
@@ -164,7 +169,7 @@ export class TaskForm implements OnInit {
           this.router.navigate(['/tasks']);
         },
         error: (error) => {
-          this.errorMessage.set(error?.error?.message ?? 'Görev oluşturulurken bir hata oluştu.');
+          this.errorMessage.set(error.message);
         },
       });
   }
@@ -187,16 +192,17 @@ export class TaskForm implements OnInit {
         finalize(() => {
           this.isSaving.set(false);
         }),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: () => {
-          this.snackBar.open('Görev güncellendi.', 'Tamam', {
+          this.snackBar.open('Görev başarıyla güncellendi.', 'Tamam', {
             duration: 3000,
           });
           this.router.navigate(['/tasks']);
         },
         error: (error) => {
-          this.errorMessage.set(error?.error?.message ?? 'Görev güncellenirken bir hata oluştu.');
+          this.errorMessage.set(error.message);
         },
       });
   }
@@ -219,7 +225,6 @@ export class TaskForm implements OnInit {
     }
 
     const date = new Date(value);
-
     const timezoneOffset = date.getTimezoneOffset() * 60_000;
 
     return new Date(date.getTime() - timezoneOffset).toISOString().slice(0, 16);

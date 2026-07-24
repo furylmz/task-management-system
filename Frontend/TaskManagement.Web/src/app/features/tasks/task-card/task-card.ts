@@ -8,10 +8,20 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 
 import { Priority, TaskItem, TaskItemStatus } from '../../../core/models/task.model';
+import { PriorityLabelPipe } from '../../../shared/pipes/priority-label.pipe';
+import { StatusLabelPipe } from '../../../shared/pipes/status-label.pipe';
 
 @Component({
   selector: 'app-task-card',
-  imports: [DatePipe, MatButtonModule, MatCardModule, MatChipsModule, MatIconModule],
+  imports: [
+    DatePipe,
+    MatButtonModule,
+    MatCardModule,
+    MatChipsModule,
+    MatIconModule,
+    PriorityLabelPipe,
+    StatusLabelPipe,
+  ],
   templateUrl: './task-card.html',
   styleUrl: './task-card.css',
 })
@@ -24,29 +34,6 @@ export class TaskCard {
 
   readonly Priority = Priority;
   readonly TaskItemStatus = TaskItemStatus;
-
-  getPriorityLabel(priority: Priority): string {
-    const labels: Record<Priority, string> = {
-      [Priority.Lowest]: 'Çok Düşük',
-      [Priority.Low]: 'Düşük',
-      [Priority.Medium]: 'Orta',
-      [Priority.High]: 'Yüksek',
-      [Priority.Highest]: 'Çok Yüksek',
-    };
-
-    return labels[priority];
-  }
-
-  getStatusLabel(status: TaskItemStatus): string {
-    const labels: Record<TaskItemStatus, string> = {
-      [TaskItemStatus.Pending]: 'Bekliyor',
-      [TaskItemStatus.InProgress]: 'Devam Ediyor',
-      [TaskItemStatus.Completed]: 'Tamamlandı',
-      [TaskItemStatus.Cancelled]: 'İptal Edildi',
-    };
-
-    return labels[status];
-  }
 
   showDetails(): void {
     this.detailsClicked.emit(this.task().id);

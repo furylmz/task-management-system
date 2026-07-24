@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
@@ -178,7 +178,7 @@ export class TaskList implements OnInit {
         error: (error) => {
           this.tasks.set([]);
 
-          this.errorMessage.set(error?.error?.message ?? 'Görevler yüklenirken bir hata oluştu.');
+          this.errorMessage.set(error.message);
         },
       });
   }

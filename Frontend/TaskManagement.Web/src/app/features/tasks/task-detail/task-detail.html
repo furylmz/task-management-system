@@ -45,7 +45,7 @@
         </mat-card-title>
 
         <mat-card-subtitle>
-          {{ getStatusLabel(currentTask.status) }}
+          {{ currentTask.status | statusLabel }}
         </mat-card-subtitle>
       </mat-card-header>
 
@@ -69,11 +69,11 @@
               currentTask.priority === Priority.Highest
             "
           >
-            {{ getPriorityLabel(currentTask.priority) }}
+            {{ currentTask.priority | priorityLabel }}
           </span>
 
           <mat-chip>
-            {{ getStatusLabel(currentTask.status) }}
+            {{ currentTask.status | statusLabel }}
           </mat-chip>
         </div>
 
@@ -140,7 +140,7 @@
 
               <span class="detail-value">
                 @if (currentTask.categoryId) {
-                  {{ currentTask.categoryId }}
+                  {{ categoryName() ?? 'Kategori yok' }}
                 } @else {
                   Kategori yok
                 }
