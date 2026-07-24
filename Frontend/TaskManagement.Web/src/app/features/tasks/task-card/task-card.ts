@@ -1,4 +1,5 @@
-import { Component, input, output } from '@angular/core';
+// src/app/features/tasks/task-card/task-card.ts
+import { Component, computed, input, output } from '@angular/core';
 
 import { DatePipe } from '@angular/common';
 
@@ -28,12 +29,29 @@ import { StatusLabelPipe } from '../../../shared/pipes/status-label.pipe';
 export class TaskCard {
   readonly task = input.required<TaskItem>();
 
+  readonly categoryColor = input<string | null>(null);
+  readonly categoryName = input<string | null>(null);
+
   readonly detailsClicked = output<string>();
   readonly editClicked = output<string>();
   readonly deleteClicked = output<string>();
 
   readonly Priority = Priority;
   readonly TaskItemStatus = TaskItemStatus;
+
+  readonly isOverdue = computed(() => {
+    const task = this.task();
+
+    if (task.status === TaskItemStatus.Completed || task.status === TaskItemStatus.Cancelled) {
+      return false;
+    }
+
+    if (!task.dueDate) {
+      return false;
+    }
+
+    return new Date(task.dueDate) < new Date();
+  });
 
   showDetails(): void {
     this.detailsClicked.emit(this.task().id);

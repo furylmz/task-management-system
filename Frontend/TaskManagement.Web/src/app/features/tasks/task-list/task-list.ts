@@ -94,6 +94,14 @@ export class TaskList implements OnInit {
     }),
   });
 
+  readonly categoryMap = computed(() => {
+    const map = new Map<string, { name: string; color: string }>();
+    for (const cat of this.categories()) {
+      map.set(cat.id, { name: cat.name, color: cat.color });
+    }
+    return map;
+  });
+
   ngOnInit(): void {
     this.initializeSearch();
     this.initializeFilters();

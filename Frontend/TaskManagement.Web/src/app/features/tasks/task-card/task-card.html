@@ -1,4 +1,4 @@
-<mat-card class="task-card">
+<mat-card class="task-card" [class.task-card--overdue]="isOverdue()">
   <mat-card-header>
     <div class="task-card__header">
       <div>
@@ -7,7 +7,7 @@
         </mat-card-title>
 
         <mat-card-subtitle>
-          {{ task().status | statusLabel  }}
+          {{ task().status | statusLabel }}
         </mat-card-subtitle>
       </div>
 
@@ -36,53 +36,56 @@
     }
 
     <div class="task-meta">
-      @if (task().dueDate) {
-        <div class="task-meta__item">
-          <mat-icon>event</mat-icon>
+      @if (isOverdue()) {
+        <div class="task-meta__item task-meta__item--overdue">
+          <mat-icon>warning</mat-icon>
+          <span>Gecikmiş!</span>
+        </div>
+      }
 
+      @if (task().dueDate) {
+        <div
+          class="task-meta__item"
+          [class.task-meta__item--overdue]="isOverdue()"
+        >
+          <mat-icon>event</mat-icon>
           <span>
-            Son tarih:
-            {{ task().dueDate | date: 'dd.MM.yyyy HH:mm' }}
+            Son tarih: {{ task().dueDate | date: 'dd.MM.yyyy HH:mm' }}
           </span>
+        </div>
+      }
+
+      @if (categoryColor()) {
+        <div class="task-meta__item">
+          <span
+            class="category-dot"
+            [style.background-color]="categoryColor()"
+          ></span>
+          <span>{{ categoryName() ?? 'Kategori' }}</span>
         </div>
       }
 
       <div class="task-meta__item">
         <mat-icon>schedule</mat-icon>
-
         <span>
-          Oluşturulma:
-          {{ task().createdAt | date: 'dd.MM.yyyy' }}
+          Oluşturulma: {{ task().createdAt | date: 'dd.MM.yyyy' }}
         </span>
       </div>
     </div>
   </mat-card-content>
 
   <mat-card-actions align="end">
-    <button
-      mat-button
-      type="button"
-      (click)="showDetails()"
-    >
+    <button mat-button type="button" (click)="showDetails()">
       <mat-icon>visibility</mat-icon>
       Detay
     </button>
 
-    <button
-      mat-button
-      type="button"
-      (click)="editTask()"
-    >
+    <button mat-button type="button" (click)="editTask()">
       <mat-icon>edit</mat-icon>
       Düzenle
     </button>
 
-    <button
-      mat-button
-      type="button"
-      class="delete-button"
-      (click)="deleteTask()"
-    >
+    <button mat-button type="button" class="delete-button" (click)="deleteTask()">
       <mat-icon>delete</mat-icon>
       Sil
     </button>
