@@ -1,4 +1,138 @@
 <section class="dashboard">
-  <h1>Dashboard</h1>
-  <p>Görev yönetim paneline hoş geldiniz.</p>
+  <header class="page-header">
+    <div>
+      <h1>Dashboard</h1>
+      <p>Görevlerinize genel bir bakış.</p>
+    </div>
+
+    <button mat-flat-button type="button" (click)="goToTasks()">
+      <mat-icon>checklist</mat-icon>
+      Tüm Görevler
+    </button>
+  </header>
+
+  @if (isLoadingStats()) {
+    <div class="state-container">
+      <mat-spinner diameter="40" />
+      <p>İstatistikler yükleniyor...</p>
+    </div>
+  } @else if (statistics(); as stats) {
+    <div class="stats-grid">
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <mat-icon class="stat-icon stat-icon--total">assignment</mat-icon>
+          <div class="stat-info">
+            <span class="stat-value">{{ stats.totalTasks }}</span>
+            <span class="stat-label">Toplam Görev</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <mat-icon class="stat-icon stat-icon--pending">pending</mat-icon>
+          <div class="stat-info">
+            <span class="stat-value">{{ stats.pendingTasks }}</span>
+            <span class="stat-label">Bekliyor</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <mat-icon class="stat-icon stat-icon--inprogress">autorenew</mat-icon>
+          <div class="stat-info">
+            <span class="stat-value">{{ stats.inProgressTasks }}</span>
+            <span class="stat-label">Devam Ediyor</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <mat-icon class="stat-icon stat-icon--completed">task_alt</mat-icon>
+          <div class="stat-info">
+            <span class="stat-value">{{ stats.completedTasks }}</span>
+            <span class="stat-label">Tamamlandı</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <mat-icon class="stat-icon stat-icon--cancelled">cancel</mat-icon>
+          <div class="stat-info">
+            <span class="stat-value">{{ stats.cancelledTasks }}</span>
+            <span class="stat-label">İptal Edildi</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card stat-card--overdue">
+        <mat-card-content>
+          <mat-icon class="stat-icon stat-icon--overdue">warning</mat-icon>
+          <div class="stat-info">
+            <span class="stat-value">{{ stats.overdueTasks }}</span>
+            <span class="stat-label">Gecikmiş</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <mat-card class="completion-card">
+      <mat-card-content>
+        <div class="completion-header">
+          <span class="completion-label">Tamamlanma Oranı</span>
+          <span class="completion-value">%{{ stats.completionRate | number: '1.0-0' }}</span>
+        </div>
+        <div class="progress-bar-track">
+          <div
+            class="progress-bar-fill"
+            [style.width.%]="stats.completionRate"
+          ></div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  @if (isLoadingOverdue()) {
+    <div class="state-container">
+      <mat-spinner diameter="32" />
+    </div>
+  } @else if (overdueTasks().length > 0) {
+    <section class="overdue-section">
+      <h2 class="overdue-title">
+        <mat-icon>warning</mat-icon>
+        Gecikmiş Görevler ({{ overdueTasks().length }})
+      </h2>
+
+      <div class="overdue-list">
+        @for (task of overdueTasks(); track task.id) {
+          <mat-card
+            class="overdue-card"
+            (click)="goToTask(task.id)"
+            (keydown.enter)="goToTask(task.id)"
+            tabindex="0"
+            role="button"
+          >
+            <mat-card-content>
+              <div class="overdue-card__content">
+                <div>
+                  <p class="overdue-card__title">{{ task.title }}</p>
+
+                  @if (task.dueDate) {
+                    <p class="overdue-card__date">
+                      Son tarih: {{ task.dueDate | date: 'dd.MM.yyyy HH:mm' }}
+                    </p>
+                  }
+                </div>
+
+                <mat-icon>arrow_forward</mat-icon>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    </section>
+  }
 </section>

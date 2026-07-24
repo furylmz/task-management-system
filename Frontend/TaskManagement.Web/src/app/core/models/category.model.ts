@@ -9,11 +9,11 @@ export interface Category {
 export interface CreateCategoryRequest {
   name: string;
   description?: string | null;
-  color: string;
+  color?: string | null;
 }
 
 export interface UpdateCategoryRequest {
   name: string;
   description?: string | null;
-  color: string;
+  color?: string | null;
 }

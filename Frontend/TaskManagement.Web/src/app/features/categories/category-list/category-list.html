@@ -1,1 +1,153 @@
-<p>category-list works!</p>
+<section class="category-list-page">
+  <header class="page-header">
+    <div>
+      <h1>Kategoriler</h1>
+      <p>Görev kategorilerinizi yönetin.</p>
+    </div>
+  </header>
+
+  <mat-card class="form-card">
+    <mat-card-header>
+      <mat-card-title>
+        {{ editingId() ? 'Kategoriyi Düzenle' : 'Yeni Kategori' }}
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      @if (errorMessage()) {
+        <div class="error-message">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ errorMessage() }}</span>
+        </div>
+      }
+
+      <form class="category-form" [formGroup]="form" (ngSubmit)="save()">
+        <mat-form-field appearance="outline" class="name-field">
+          <mat-label>Kategori adı</mat-label>
+          <input
+            matInput
+            formControlName="name"
+            maxlength="100"
+            placeholder="Örn: Kişisel, İş, Okul"
+          />
+
+          <mat-hint align="end">
+            {{ form.controls.name.value?.length ?? 0 }}/100
+          </mat-hint>
+
+          @if (form.controls.name.hasError('required') && form.controls.name.touched) {
+            <mat-error>Kategori adı zorunludur.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="description-field">
+          <mat-label>Açıklama (isteğe bağlı)</mat-label>
+          <input
+            matInput
+            formControlName="description"
+            placeholder="Kısa bir açıklama ekleyin"
+          />
+        </mat-form-field>
+
+        <div class="color-field">
+          <label class="color-label">Renk</label>
+          <div class="color-picker-wrapper">
+            <input
+              type="color"
+              formControlName="color"
+              class="color-input"
+              id="category-color"
+            />
+            <span class="color-preview" [style.background-color]="form.controls.color.value"></span>
+            <span class="color-value">{{ form.controls.color.value }}</span>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          @if (editingId()) {
+            <button
+              mat-stroked-button
+              type="button"
+              [disabled]="isSaving()"
+              (click)="cancelEdit()"
+            >
+              İptal
+            </button>
+          }
+
+          <button mat-flat-button type="submit" [disabled]="isSaving()">
+            @if (isSaving()) {
+              <mat-spinner diameter="20" />
+            } @else {
+              <mat-icon>{{ editingId() ? 'save' : 'add' }}</mat-icon>
+            }
+            {{ editingId() ? 'Güncelle' : 'Oluştur' }}
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  @if (isLoading()) {
+    <div class="state-container">
+      <mat-spinner diameter="40" />
+      <p>Kategoriler yükleniyor...</p>
+    </div>
+  } @else if (categories().length === 0) {
+    <div class="state-container empty-state">
+      <mat-icon>category</mat-icon>
+      <h2>Henüz kategori yok</h2>
+      <p>Yukarıdaki formu kullanarak ilk kategorinizi oluşturun.</p>
+    </div>
+  } @else {
+    <div class="category-grid">
+      @for (category of categories(); track category.id) {
+        <mat-card
+          class="category-card"
+          [class.category-card--editing]="editingId() === category.id"
+        >
+          <mat-card-content>
+            <div class="category-card__content">
+              <span
+                class="category-color-dot"
+                [style.background-color]="category.color"
+                [matTooltip]="category.color"
+              ></span>
+
+              <div class="category-info">
+                <p class="category-name">{{ category.name }}</p>
+
+                @if (category.description) {
+                  <p class="category-description">{{ category.description }}</p>
+                }
+              </div>
+
+              <div class="category-actions">
+                <button
+                  mat-icon-button
+                  type="button"
+                  matTooltip="Düzenle"
+                  [disabled]="isDeleting()"
+                  (click)="startEdit(category)"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+
+                <button
+                  mat-icon-button
+                  type="button"
+                  class="delete-button"
+                  matTooltip="Sil"
+                  [disabled]="isDeleting()"
+                  (click)="deleteCategory(category.id)"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  }
+</section>

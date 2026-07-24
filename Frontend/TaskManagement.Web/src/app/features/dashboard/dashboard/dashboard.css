@@ -1,3 +1,191 @@
-.dashboard h1 {
-  margin-top: 0;
+:host {
+  display: block;
+}
+
+.dashboard {
+  width: 100%;
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.page-header h1 {
+  margin: 0 0 6px;
+  font-size: 2rem;
+}
+
+.page-header p {
+  margin: 0;
+  opacity: 0.7;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card mat-card-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+}
+
+.stat-icon {
+  width: 40px;
+  height: 40px;
+  font-size: 40px;
+  flex-shrink: 0;
+}
+
+.stat-icon--total    { color: var(--mat-sys-primary); }
+.stat-icon--pending  { color: #92400e; }
+.stat-icon--inprogress { color: #1d4ed8; }
+.stat-icon--completed  { color: #166534; }
+.stat-icon--cancelled  { color: #6b7280; }
+.stat-icon--overdue    { color: var(--mat-sys-error); }
+
+.stat-card--overdue {
+  border-left: 4px solid var(--mat-sys-error);
+}
+
+.stat-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  opacity: 0.65;
+}
+
+.completion-card {
+  margin-bottom: 32px;
+}
+
+.completion-card mat-card-content {
+  padding: 20px;
+}
+
+.completion-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.completion-label {
+  font-weight: 500;
+}
+
+.completion-value {
+  font-weight: 700;
+  color: var(--mat-sys-primary);
+}
+
+.progress-bar-track {
+  height: 8px;
+  border-radius: 999px;
+  background-color: var(--mat-sys-surface-container-high);
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background-color: var(--mat-sys-primary);
+  transition: width 600ms ease;
+}
+
+.overdue-section {
+  margin-top: 8px;
+}
+
+.overdue-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px;
+  font-size: 1.15rem;
+  color: var(--mat-sys-error);
+}
+
+.overdue-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.overdue-card {
+  cursor: pointer;
+  transition: transform 150ms ease, box-shadow 150ms ease;
+  border-left: 4px solid var(--mat-sys-error);
+}
+
+.overdue-card:hover {
+  transform: translateX(4px);
+  box-shadow: 0 4px 16px rgb(0 0 0 / 10%);
+}
+
+.overdue-card mat-card-content {
+  padding: 16px;
+}
+
+.overdue-card__content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.overdue-card__title {
+  margin: 0 0 4px;
+  font-weight: 500;
+}
+
+.overdue-card__date {
+  margin: 0;
+  font-size: 0.85rem;
+  opacity: 0.65;
+}
+
+.state-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 0;
+  opacity: 0.7;
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+  }
+
+  .page-header button {
+    width: 100%;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
 }
