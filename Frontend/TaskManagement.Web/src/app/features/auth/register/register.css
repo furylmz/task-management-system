@@ -1,80 +1,69 @@
 .register-page {
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   min-height: 100vh;
-  padding: 24px;
+  background-color: var(--mat-sys-surface-container-lowest);
+  padding: 16px;
 }
 
-.register-form {
+.auth-card {
+  width: 100%;
+  max-width: 500px;
+  padding: 24px 16px;
+}
+
+.auth-form {
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  width: 100%;
-  max-width: 520px;
-  padding: 32px;
-  border: 1px solid #dddddd;
-  border-radius: 12px;
-}
-
-.register-form h1 {
-  margin: 0 0 8px;
-  text-align: center;
+  gap: 16px;
+  margin-top: 16px;
 }
 
 .name-fields {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
   gap: 16px;
 }
 
-.form-field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+.half-width {
+  flex: 1;
 }
 
-.form-field input {
-  padding: 12px;
-  font: inherit;
-  border: 1px solid #bbbbbb;
-  border-radius: 6px;
+.full-width {
+  width: 100%;
 }
 
-.form-field input:focus {
-  outline: 2px solid currentColor;
-  outline-offset: 1px;
-}
-
-.field-error,
-.api-error {
-  font-size: 14px;
+.submit-btn {
+  min-height: 48px;
+  font-size: 1.1rem;
+  margin-top: 16px;
 }
 
 .api-error {
   padding: 12px;
-  border: 1px solid currentColor;
-  border-radius: 6px;
-}
-
-button {
-  padding: 12px;
-  font: inherit;
-  cursor: pointer;
-}
-
-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
+  margin-bottom: 16px;
+  background-color: var(--mat-sys-error-container);
+  color: var(--mat-sys-on-error-container);
+  border-radius: 8px;
+  font-size: 0.9rem;
 }
 
 .login-link {
   margin: 0;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.center-actions {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 16px;
 }
 
 @media (max-width: 600px) {
   .name-fields {
-    grid-template-columns: 1fr;
+    flex-direction: column;
+    gap: 0;
   }
 }

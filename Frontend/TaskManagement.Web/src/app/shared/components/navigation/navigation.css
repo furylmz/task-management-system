@@ -48,6 +48,10 @@
   align-items: center;
 }
 
+.mobile-menu-button {
+  display: none;
+}
+
 @media (max-width: 768px) {
   .navigation {
     padding: 0 12px;
@@ -55,6 +59,10 @@
 
   .desktop-navigation {
     display: none;
+  }
+
+  .mobile-menu-button {
+    display: block;
   }
 
   .user-name {

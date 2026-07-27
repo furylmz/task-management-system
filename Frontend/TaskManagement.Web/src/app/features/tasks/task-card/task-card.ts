@@ -67,6 +67,11 @@ export class TaskCard {
     this.deleteClicked.emit(this.task().id);
   }
 
+  onDragEnter(event: DragEvent): void {
+    event.preventDefault();
+    this.isDragOver.set(true);
+  }
+
   onDragOver(event: DragEvent): void {
     event.preventDefault();
     if (event.dataTransfer) {

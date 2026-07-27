@@ -178,6 +178,7 @@
   font-weight: 600;
   cursor: grab;
   user-select: none;
+  touch-action: none;
   transition: transform 150ms ease, box-shadow 150ms ease;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }

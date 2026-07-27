@@ -36,6 +36,29 @@
     </a>
   </nav>
 
+  <button
+    mat-icon-button
+    class="mobile-menu-button"
+    [matMenuTriggerFor]="mobileMenu"
+  >
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <mat-menu #mobileMenu="matMenu">
+    <a mat-menu-item routerLink="/dashboard" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
+      <mat-icon>dashboard</mat-icon>
+      <span>Dashboard</span>
+    </a>
+    <a mat-menu-item routerLink="/tasks" routerLinkActive="active-link">
+      <mat-icon>checklist</mat-icon>
+      <span>Görevler</span>
+    </a>
+    <a mat-menu-item routerLink="/categories" routerLinkActive="active-link">
+      <mat-icon>category</mat-icon>
+      <span>Kategoriler</span>
+    </a>
+  </mat-menu>
+
   <span class="navigation-spacer"></span>
 
   <button
