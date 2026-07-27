@@ -1,4 +1,9 @@
-<mat-card class="task-card" [class.task-card--overdue]="isOverdue()">
+<mat-card class="task-card" 
+          [class.task-card--overdue]="isOverdue()"
+          [class.task-card--dragover]="isDragOver()"
+          (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave($event)"
+          (drop)="onDrop($event)">
   <mat-card-header>
     <div class="task-card__header">
       <div>

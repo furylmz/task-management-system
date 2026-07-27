@@ -16,6 +16,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTooltip, MatTooltipModule } from '@angular/material/tooltip';
 
 import { Priority, TaskItem, TaskItemStatus } from '../../../core/models/task.model';
 import { TaskComment } from '../../../core/models/comment.model';
@@ -42,6 +43,7 @@ import { StatusLabelPipe } from '../../../shared/pipes/status-label.pipe';
     MatIconModule,
     MatInputModule,
     MatProgressSpinnerModule,
+    MatTooltipModule,
     PriorityLabelPipe,
     StatusLabelPipe,
   ],
@@ -286,7 +288,6 @@ export class TaskDetail implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (blob) => {
-          // Tarayıcıya dosyayı indirt
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;

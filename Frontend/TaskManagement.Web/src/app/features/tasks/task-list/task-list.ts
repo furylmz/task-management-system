@@ -17,7 +17,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { Priority, TaskItem, TaskItemStatus, TaskSortField } from '../../../core/models/task.model';
+import { Priority, TaskItem, TaskItemStatus, TaskSortField, UpdateTaskRequest } from '../../../core/models/task.model';
 
 import { Category } from '../../../core/models/category.model';
 
@@ -310,6 +310,43 @@ export class TaskList implements OnInit {
             this.pageNumber.update((currentPage) => currentPage - 1);
           }
           this.loadTasks();
+        },
+      });
+  }
+
+  onDragStart(event: DragEvent, status: TaskItemStatus): void {
+    if (event.dataTransfer) {
+      event.dataTransfer.setData('text/plain', status.toString());
+      event.dataTransfer.effectAllowed = 'copy';
+    }
+  }
+
+  updateTaskStatus(task: TaskItem, newStatus: TaskItemStatus): void {
+    const previousTasks = this.tasks();
+
+    this.tasks.update((tasks) =>
+      tasks.map((t) => (t.id === task.id ? { ...t, status: newStatus } : t)),
+    );
+
+    const request: UpdateTaskRequest = {
+      title: task.title,
+      description: task.description,
+      priority: task.priority,
+      status: newStatus,
+      dueDate: task.dueDate,
+      categoryId: task.categoryId,
+    };
+
+    this.taskService
+      .update(task.id, request)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.snackBar.open('Görev durumu güncellendi.', 'Tamam', { duration: 2500 });
+        },
+        error: () => {
+          this.tasks.set(previousTasks);
+          this.snackBar.open('Durum güncellenemedi.', 'Kapat', { duration: 3000 });
         },
       });
   }

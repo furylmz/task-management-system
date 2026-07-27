@@ -1,5 +1,4 @@
-// src/app/features/tasks/task-card/task-card.ts
-import { Component, computed, input, output } from '@angular/core';
+import { Component, computed, input, output, signal } from '@angular/core';
 
 import { DatePipe } from '@angular/common';
 
@@ -35,6 +34,9 @@ export class TaskCard {
   readonly detailsClicked = output<string>();
   readonly editClicked = output<string>();
   readonly deleteClicked = output<string>();
+  readonly statusDropped = output<TaskItemStatus>();
+
+  readonly isDragOver = signal(false);
 
   readonly Priority = Priority;
   readonly TaskItemStatus = TaskItemStatus;
@@ -63,5 +65,30 @@ export class TaskCard {
 
   deleteTask(): void {
     this.deleteClicked.emit(this.task().id);
+  }
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect = 'copy';
+    }
+    this.isDragOver.set(true);
+  }
+
+  onDragLeave(event: DragEvent): void {
+    this.isDragOver.set(false);
+  }
+
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+    this.isDragOver.set(false);
+
+    const statusStr = event.dataTransfer?.getData('text/plain');
+    if (statusStr) {
+      const newStatus = Number(statusStr) as TaskItemStatus;
+      if (this.task().status !== newStatus) {
+        this.statusDropped.emit(newStatus);
+      }
+    }
   }
 }

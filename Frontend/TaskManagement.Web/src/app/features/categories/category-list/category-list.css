@@ -95,7 +95,6 @@
   align-self: flex-end;
 }
 
-/* -- Hata Mesajı -- */
 .error-message {
   display: flex;
   align-items: center;

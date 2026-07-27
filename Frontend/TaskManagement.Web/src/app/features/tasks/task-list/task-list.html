@@ -186,6 +186,22 @@
     }
   </div>
 
+  <div class="status-drag-palette">
+    <span class="drag-hint">Durum atamak için karta sürükleyin:</span>
+    <div class="status-badge badge-pending" 
+         draggable="true" 
+         (dragstart)="onDragStart($event, TaskItemStatus.Pending)">Bekliyor</div>
+    <div class="status-badge badge-inprogress" 
+         draggable="true" 
+         (dragstart)="onDragStart($event, TaskItemStatus.InProgress)">Devam Ediyor</div>
+    <div class="status-badge badge-completed" 
+         draggable="true" 
+         (dragstart)="onDragStart($event, TaskItemStatus.Completed)">Tamamlandı</div>
+    <div class="status-badge badge-cancelled" 
+         draggable="true" 
+         (dragstart)="onDragStart($event, TaskItemStatus.Cancelled)">İptal Edildi</div>
+  </div>
+
   @if (isLoading()) {
     <div class="state-container">
       <mat-spinner diameter="48" />
@@ -261,6 +277,7 @@
           (detailsClicked)="showTaskDetails($event)"
           (editClicked)="editTask($event)"
           (deleteClicked)="deleteTask($event)"
+          (statusDropped)="updateTaskStatus(task, $event)"
         />
       }
     </div>

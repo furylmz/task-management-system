@@ -1,4 +1,3 @@
-// src/app/core/services/attachment.ts
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';

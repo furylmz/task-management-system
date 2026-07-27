@@ -15,6 +15,13 @@
   box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
 }
 
+.task-card--dragover {
+  outline: 2px dashed var(--mat-sys-primary);
+  outline-offset: -4px;
+  background-color: color-mix(in srgb, var(--mat-sys-primary) 5%, var(--mat-sys-surface));
+  transform: scale(1.02);
+}
+
 .task-card__header {
   display: flex;
   width: 100%;
