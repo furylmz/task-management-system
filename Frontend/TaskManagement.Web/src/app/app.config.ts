@@ -5,6 +5,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 
 import { jwtInterceptor } from './core/interceptors/jwt-interceptor';
 import { errorInterceptor } from './core/interceptors/error-interceptor';
+import { cacheInterceptor } from './core/interceptors/cache-interceptor';
 
 import { routes } from './app.routes';
 
@@ -13,6 +14,6 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideAnimationsAsync(),
-    provideHttpClient(withInterceptors([jwtInterceptor, errorInterceptor])),
+    provideHttpClient(withInterceptors([cacheInterceptor, jwtInterceptor, errorInterceptor])),
   ],
 };
