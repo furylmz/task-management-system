@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace TaskManagement.API.Migrations
+namespace TaskManagement.API.Migrations.PostgreSQL
 {
     /// <inheritdoc />
     public partial class AddUniqueCategoryNamePerUser : Migration

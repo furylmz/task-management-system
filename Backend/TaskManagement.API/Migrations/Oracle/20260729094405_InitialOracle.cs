@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace TaskManagement.API.Migrations
+namespace TaskManagement.API.Migrations.Oracle
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialOracle : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,15 +15,15 @@ namespace TaskManagement.API.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Username = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    Email = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    PasswordHash = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    FirstName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    LastName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true)
+                    Id = table.Column<Guid>(type: "RAW(16)", nullable: false),
+                    Username = table.Column<string>(type: "NVARCHAR2(50)", maxLength: 50, nullable: false),
+                    Email = table.Column<string>(type: "NVARCHAR2(100)", maxLength: 100, nullable: false),
+                    PasswordHash = table.Column<string>(type: "NVARCHAR2(255)", maxLength: 255, nullable: false),
+                    FirstName = table.Column<string>(type: "NVARCHAR2(50)", maxLength: 50, nullable: false),
+                    LastName = table.Column<string>(type: "NVARCHAR2(50)", maxLength: 50, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    UpdatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    IsActive = table.Column<bool>(type: "BOOLEAN", nullable: false, defaultValue: true)
                 },
                 constraints: table =>
                 {
@@ -34,12 +34,12 @@ namespace TaskManagement.API.Migrations
                 name: "Categories",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    Color = table.Column<string>(type: "character varying(7)", maxLength: 7, nullable: false, defaultValue: "#007bff"),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
+                    Id = table.Column<Guid>(type: "RAW(16)", nullable: false),
+                    Name = table.Column<string>(type: "NVARCHAR2(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true),
+                    Color = table.Column<string>(type: "NVARCHAR2(7)", maxLength: 7, nullable: false, defaultValue: "#007bff"),
+                    UserId = table.Column<Guid>(type: "RAW(16)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
                 },
                 constraints: table =>
                 {
@@ -56,17 +56,17 @@ namespace TaskManagement.API.Migrations
                 name: "Tasks",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Title = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    Priority = table.Column<int>(type: "integer", nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
-                    DueDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    CompletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CategoryId = table.Column<Guid>(type: "uuid", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
+                    Id = table.Column<Guid>(type: "RAW(16)", nullable: false),
+                    Title = table.Column<string>(type: "NVARCHAR2(200)", maxLength: 200, nullable: false),
+                    Description = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true),
+                    Priority = table.Column<int>(type: "NUMBER(10)", nullable: false),
+                    Status = table.Column<int>(type: "NUMBER(10)", nullable: false, defaultValue: 0),
+                    DueDate = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: true),
+                    CompletedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: true),
+                    UserId = table.Column<Guid>(type: "RAW(16)", nullable: false),
+                    CategoryId = table.Column<Guid>(type: "RAW(16)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    UpdatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
                 },
                 constraints: table =>
                 {
@@ -89,13 +89,13 @@ namespace TaskManagement.API.Migrations
                 name: "Attachments",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    TaskId = table.Column<Guid>(type: "uuid", nullable: false),
-                    FileName = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    FilePath = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
-                    FileSize = table.Column<long>(type: "bigint", nullable: false),
-                    ContentType = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    UploadedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
+                    Id = table.Column<Guid>(type: "RAW(16)", nullable: false),
+                    TaskId = table.Column<Guid>(type: "RAW(16)", nullable: false),
+                    FileName = table.Column<string>(type: "NVARCHAR2(255)", maxLength: 255, nullable: false),
+                    FilePath = table.Column<string>(type: "NVARCHAR2(500)", maxLength: 500, nullable: false),
+                    FileSize = table.Column<long>(type: "NUMBER(19)", nullable: false),
+                    ContentType = table.Column<string>(type: "NVARCHAR2(100)", maxLength: 100, nullable: false),
+                    UploadedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
                 },
                 constraints: table =>
                 {
@@ -112,11 +112,11 @@ namespace TaskManagement.API.Migrations
                 name: "Comments",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    TaskId = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Comment = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
+                    Id = table.Column<Guid>(type: "RAW(16)", nullable: false),
+                    TaskId = table.Column<Guid>(type: "RAW(16)", nullable: false),
+                    UserId = table.Column<Guid>(type: "RAW(16)", nullable: false),
+                    Comment = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
                 },
                 constraints: table =>
                 {
@@ -141,9 +141,10 @@ namespace TaskManagement.API.Migrations
                 column: "TaskId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Categories_UserId",
+                name: "IX_Categories_UserId_Name",
                 table: "Categories",
-                column: "UserId");
+                columns: new[] { "UserId", "Name" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_TaskId",

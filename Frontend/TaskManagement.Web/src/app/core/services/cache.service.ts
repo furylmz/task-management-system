@@ -10,7 +10,7 @@ interface CacheEntry {
 @Injectable({ providedIn: 'root' })
 export class CacheService {
   private cache = new Map<string, CacheEntry>();
-  private readonly MAX_CACHE_AGE = 5 * 60 * 1000; // 5 mins
+  private readonly MAX_CACHE_AGE = 5 * 60 * 1000;
 
   get(url: string): HttpResponse<any> | null {
     const entry = this.cache.get(url);
@@ -29,7 +29,7 @@ export class CacheService {
     this.cache.set(url, {
       url,
       response,
-      entryTime: Date.now()
+      entryTime: Date.now(),
     });
   }
 

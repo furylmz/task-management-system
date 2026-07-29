@@ -4,59 +4,60 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using Oracle.EntityFrameworkCore.Metadata;
 using TaskManagement.API.Data;
 
 #nullable disable
 
-namespace TaskManagement.API.Migrations
+namespace TaskManagement.API.Migrations.Oracle
 {
-    [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260706122034_InitialCreate")]
-    partial class InitialCreate
+    [DbContext(typeof(OracleDbContext))]
+    [Migration("20260729094405_InitialOracle")]
+    partial class InitialOracle
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.28")
-                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+                .HasAnnotation("ProductVersion", "8.0.29")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+            OracleModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("TaskManagement.API.Models.Category", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("RAW(16)");
 
                     b.Property<string>("Color")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(7)
-                        .HasColumnType("character varying(7)")
+                        .HasColumnType("NVARCHAR2(7)")
                         .HasDefaultValue("#007bff");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("TIMESTAMP(7)")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasColumnType("NVARCHAR2(2000)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("NVARCHAR2(100)");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("RAW(16)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId", "Name")
+                        .IsUnique();
 
                     b.ToTable("Categories");
                 });
@@ -65,32 +66,32 @@ namespace TaskManagement.API.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("RAW(16)");
 
                     b.Property<string>("ContentType")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("NVARCHAR2(100)");
 
                     b.Property<string>("FileName")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("NVARCHAR2(255)");
 
                     b.Property<string>("FilePath")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("NVARCHAR2(500)");
 
                     b.Property<long>("FileSize")
-                        .HasColumnType("bigint");
+                        .HasColumnType("NUMBER(19)");
 
                     b.Property<Guid>("TaskId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("RAW(16)");
 
                     b.Property<DateTime>("UploadedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("TIMESTAMP(7)")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.HasKey("Id");
@@ -104,22 +105,22 @@ namespace TaskManagement.API.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("RAW(16)");
 
                     b.Property<string>("Comment")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("NVARCHAR2(2000)");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("TIMESTAMP(7)")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<Guid>("TaskId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("RAW(16)");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("RAW(16)");
 
                     b.HasKey("Id");
 
@@ -134,45 +135,45 @@ namespace TaskManagement.API.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("RAW(16)");
 
                     b.Property<Guid?>("CategoryId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("RAW(16)");
 
                     b.Property<DateTime?>("CompletedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TIMESTAMP(7)");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("TIMESTAMP(7)")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasColumnType("NVARCHAR2(2000)");
 
                     b.Property<DateTime?>("DueDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("TIMESTAMP(7)");
 
                     b.Property<int>("Priority")
-                        .HasColumnType("integer");
+                        .HasColumnType("NUMBER(10)");
 
                     b.Property<int>("Status")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("NUMBER(10)")
                         .HasDefaultValue(0);
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("NVARCHAR2(200)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("TIMESTAMP(7)")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("RAW(16)");
 
                     b.HasKey("Id");
 
@@ -187,47 +188,47 @@ namespace TaskManagement.API.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("RAW(16)");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("TIMESTAMP(7)")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("NVARCHAR2(100)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("NVARCHAR2(50)");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
+                        .HasColumnType("BOOLEAN")
                         .HasDefaultValue(true);
 
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("NVARCHAR2(50)");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("NVARCHAR2(255)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("TIMESTAMP(7)")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("NVARCHAR2(50)");
 
                     b.HasKey("Id");
 

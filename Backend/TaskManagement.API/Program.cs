@@ -14,8 +14,18 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQLConnection")));
+var databaseProvider = builder.Configuration["DatabaseProvider"] ?? "PostgreSQL";
+
+if (databaseProvider.Equals("Oracle", StringComparison.OrdinalIgnoreCase))
+{
+    builder.Services.AddDbContext<ApplicationDbContext, OracleDbContext>(options =>
+        options.UseOracle(builder.Configuration.GetConnectionString("OracleConnection")));
+}
+else
+{
+    builder.Services.AddDbContext<ApplicationDbContext, PostgreSqlDbContext>(options =>
+        options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQLConnection")));
+}
 
 builder.Services.AddEndpointsApiExplorer();
 
@@ -30,7 +40,7 @@ builder.Services.AddSwaggerGen(options =>
         Scheme = "bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "JWT tokenini gir. Başa Bearer yazmana gerek yok."
+        Description = "JWT tokenini gir."
     });
 
     options.AddSecurityRequirement(document =>
@@ -90,16 +100,17 @@ builder.Services
 
 builder.Services.AddAuthorization();
 
-//Angular izni
 const string AngularCorsPolicy = "AngularCorsPolicy";
+var frontendUrl = builder.Configuration["FrontendUrl"] ?? "http://localhost:4200";
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(AngularCorsPolicy, policy =>
     {
-        policy.WithOrigins("http://localhost:4200")
+        policy.WithOrigins(frontendUrl)
               .AllowAnyHeader()
-              .AllowAnyMethod();
+              .AllowAnyMethod()
+              .WithExposedHeaders("Content-Disposition");
     });
 });
 
