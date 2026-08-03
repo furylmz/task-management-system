@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  backend-api:
+    build: 
+      context: ./Backend/TaskManagement.API
+      dockerfile: Dockerfile
+    ports:
+      - "5217:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - DatabaseProvider=${DB_PROVIDER}
+      - ConnectionStrings__PostgreSQLConnection=${POSTGRES_CONNECTION_STRING}
+      - ConnectionStrings__OracleConnection=${ORACLE_CONNECTION_STRING}
+      - Jwt__SecretKey=${JWT_SECRET}
+      - Jwt__Issuer=${JWT_ISSUER}
+      - Jwt__Audience=${JWT_AUDIENCE}
+      - FrontendUrl=${FRONTEND_URL}
+    depends_on:
+      - db
+
+  frontend-web:
+    build:
+      context: ./Frontend/TaskManagement.Web
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend-api
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

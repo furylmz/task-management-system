@@ -8,5 +8,6 @@ Run these commands inside `Backend/TaskManagement.API`:
 
 ```bash
 dotnet user-secrets set "ConnectionStrings:PostgreSQLConnection" "..."
+dotnet user-secrets set "ConnectionStrings:OracleConnection" "..."
 dotnet user-secrets set "Jwt:SecretKey" "..."
 ```
