@@ -105,3 +105,7 @@ docker compose down
 ├── 🔐 .env.example            # Environment Variables Template
 └── 📄 README.md               # Project Documentation
 ```
+
+## 📄 License
+
+This project is licensed under the MIT License.
